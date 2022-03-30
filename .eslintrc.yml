@@ -1,0 +1,28 @@
+env:
+    browser: true
+extends:
+    - react-app
+    - prettier
+    - 'eslint:recommended'
+    - 'plugin:@typescript-eslint/recommended'
+    - 'plugin:@typescript-eslint/recommended-requiring-type-checking'
+parser: '@typescript-eslint/parser'
+parserOptions:
+    project: './tsconfig.eslint.json'
+    sourceType: 'module'
+plugins:
+    - 'eslint-plugin-prefer-arrow'
+    - 'eslint-plugin-import'
+    - 'eslint-plugin-no-null'
+    - 'eslint-plugin-unicorn'
+    - 'eslint-plugin-jsdoc'
+    - '@typescript-eslint'
+rules:
+    complexity: [2, { max: 20 }]
+    no-unused-vars: off
+    '@typescript-eslint/no-unused-vars':
+        [1, { 'argsIgnorePattern': '^_', 'varsIgnorePattern': '^_' }]
+    '@typescript-eslint/prefer-readonly': ['error']
+    no-useless-constructor: off
+globals:
+    JSX: readonly
