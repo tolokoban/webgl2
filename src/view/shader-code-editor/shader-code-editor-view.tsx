@@ -28,7 +28,7 @@ export default function ShaderCodeEditorView(props: ShaderCodeEditorViewProps) {
     return (
         <div className={getClassNames(props)}>
             <header className="theme-color-primary-dark">{props.label}</header>
-            <CodeEditor language="glsl" value={code} onChange={setCode} />
+            <CodeEditor className="code-editor" language="glsl" value={code} onChange={setCode} />
             {props.error && (
                 <pre className="theme-color-error">{props.error}</pre>
             )}

@@ -1,8 +1,10 @@
-export function makeDestroyFunctionCode() {
+import { CodeOptions } from "../types"
+export function makeDestroyFunctionCode(options: CodeOptions) {
+    const buffers = ["vert"]
+    if (options.drawElements) buffers.push("elem")
     return `public destroy() {
-    const { gl, prg, vertBuff } = this
-    gl.deleteBuffer( vertBuff )
+    const { gl, prg, ${buffers.map((name) => `${name}Buff`).join(", ")} } = this
+    ${buffers.map((name) => `gl.deleteBuffer(${name}Buff)`).join("\n    ")}
     gl.deleteProgram( prg )
-    this.actualDestroy()
 }`
 }

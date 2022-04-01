@@ -26,8 +26,21 @@ export default function SceneView(props: SceneViewProps) {
         props
             .onInit(gl)
             .then((paint) => {
+                let lastWidth = 0
+                let lastHeight = 0
+                const { canvas } = gl
                 const anim = (time: number) => {
                     window.requestAnimationFrame(anim)
+                    const width = Math.ceil(canvas.clientWidth)
+                    const height = Math.ceil(canvas.clientHeight)
+                    if (width !== lastWidth || height !== lastHeight) {
+                        lastWidth = width
+                        lastHeight = height
+                        canvas.width = width
+                        canvas.height = height
+                        gl.viewport(0, 0, width, height)
+                        console.log(width, height)
+                    }
                     paint(time)
                 }
                 window.requestAnimationFrame(anim)
@@ -38,7 +51,7 @@ export default function SceneView(props: SceneViewProps) {
 }
 
 function getClassNames(props: SceneViewProps): string {
-    const classNames = ["custom", "view-SceneView"]
+    const classNames = ["custom", "view-SceneView", "theme-shadow-button"]
     if (typeof props.className === "string") {
         classNames.push(props.className)
     }

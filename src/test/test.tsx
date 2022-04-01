@@ -1,4 +1,5 @@
 import * as React from "react"
+import Painter from "./painter"
 import Scene, { PaintFunc } from "@/view/scene"
 import "./test.css"
 
@@ -15,7 +16,7 @@ export default function Test(props: TestProps) {
 }
 
 function getClassNames(props: TestProps): string {
-    const classNames = ["custom", "-Test"]
+    const classNames = ["custom", "Test"]
     if (typeof props.className === "string") {
         classNames.push(props.className)
     }
@@ -24,13 +25,20 @@ function getClassNames(props: TestProps): string {
 }
 
 function render(gl: WebGL2RenderingContext) {
+    const painter = new Painter(gl, (painter: Painter, time: number) => {
+        gl.clearColor(0, 0, 0, 1)
+        gl.clear(gl.COLOR_BUFFER_BIT)
+        painter.$uniShift(time * 0.0001)
+        painter.$uniScale(1 + 3 * (1 + Math.cos(time * 0.0005)))
+        painter.$uniAspectRatio(gl.drawingBufferWidth / gl.drawingBufferHeight)
+    })
+    painter.createVertDataArray(4)
+    painter.pokeVertData(0, -1, -1, 0, 1)
+    painter.pokeVertData(1, +1, -1, 1, 1)
+    painter.pokeVertData(2, -1, +1, 0, 0)
+    painter.pokeVertData(3, +1, +1, 1, 0)
+    painter.pushVertData()
     return new Promise<PaintFunc>((resolve) => {
-        resolve((time: number) => {
-            const red = Math.abs(Math.cos(time * 0.001134))
-            const green = Math.abs(Math.cos(time * 0.001712))
-            const blue = Math.abs(Math.cos(time * 0.000807))
-            gl.clearColor(red, green, blue, 1)
-            gl.clear(gl.COLOR_BUFFER_BIT)
-        })
+        resolve(time => painter.paint(time))
     })
 }

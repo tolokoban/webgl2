@@ -1,10 +1,16 @@
 div.pages-tools-painter-PainterTools {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-    align-items: stretch;    
+    justify-content: flex-start;
+    align-items: stretch;
 }
 
-div.pages-tools-painter-PainterTools > * {
+div.pages-tools-painter-PainterTools > *:first-child {
     flex: 1 1 auto;
+    min-width: 60%;
+}
+
+div.pages-tools-painter-PainterTools > *:last-child {
+    flex: 1 1 auto;
+    max-width: 30%;
 }

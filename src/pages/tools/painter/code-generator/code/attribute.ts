@@ -17,13 +17,13 @@ export function makeAttributesLocationsCode(options: CodeOptions): string {
         .join("\n")
 }
 
-export function makeBindAttributesCode(props: CodeOptions): string {
+export function makeBindAttributesCode(options: CodeOptions): string {
     const code = [
         "const BPE = Float32Array.BYTES_PER_ELEMENT",
-        `const stride = BasePainter.ATTRIBS_COUNT * BPE`,
+        `const stride = ${options.className}.ATTRIBS_COUNT * BPE`,
         "gl.bindBuffer(gl.ARRAY_BUFFER, this.vertBuff)",
     ]
-    const { attributes } = props
+    const { attributes } = options
     let offset = 0
     for (const att of attributes) {
         code.push(

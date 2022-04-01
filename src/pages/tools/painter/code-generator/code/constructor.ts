@@ -6,9 +6,13 @@ export function makeConstructorCode(options: CodeOptions) {
         options.typescript
             ? `constructor(
     public readonly gl: WebGL2RenderingContext,
-    private readonly onPaint: (this: ${options.className}, time: number) => void
+    private readonly onPaint: (painter: ${options.className}, time: number) => void
 ) {`
-            : `constructor(gl, onPaint) {
+            : `/**
+ * @param {WebGL2RenderingContext} gl
+ * @param {(painter: ${options.className}, time: number) => void} painter
+ */
+constructor(gl, onPaint) {
     this.gl = gl
     this.onPaint = onPaint`
     }
@@ -31,7 +35,10 @@ export function makeConstructorCode(options: CodeOptions) {
 function makeUniformsLocationsCode(options: CodeOptions) {
     return options.uniforms
         .map(
-            (uni) => `this._$${uni.name} = gl.getUniformLocation(prg, "${uni.name}")`
+            (uni) =>
+                `this._$${uni.name} = gl.getUniformLocation(prg, "${
+                    uni.name
+                }")${options.typescript ? " as WebGLUniformLocation" : ""}`
         )
         .join("\n    ")
 }
@@ -39,14 +46,15 @@ function makeUniformsLocationsCode(options: CodeOptions) {
 function makeAttributesLocationsCode(options: CodeOptions) {
     return options.attributes
         .map(
-            (att) => `this._${att.name} = gl.getAttribLocation(prg, "${att.name}")`
+            (att) =>
+                `this._${att.name} = gl.getAttribLocation(prg, "${att.name}")`
         )
         .join("\n    ")
 }
 
 function makeBuffersCode(options: CodeOptions) {
-    const buffers = ["vertData"]
-    if (options.drawElements) buffers.push("vertElem")
+    const buffers = ["vert"]
+    if (options.drawElements) buffers.push("elem")
     return buffers
         .map(
             (name) => `const ${name}Buff = gl.createBuffer()

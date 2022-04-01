@@ -9,10 +9,6 @@ div.view-CodeEditorView {
     line-height: 1.2;
 }
 
-div.view-CodeEditorView > div {
-    height: 100%;
-}
-
 div.view-CodeEditorView pre .comment {
     color: #fff7;
 }

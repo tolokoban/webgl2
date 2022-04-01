@@ -2,7 +2,9 @@ import { CodeOptions } from "../types"
 import { indent } from "./common"
 import { makeBuffersCode } from "./buffer"
 import { makeConstructorCode } from "./constructor"
+import { makeCreateDataArrayFunctionCode, makePokeDataFunctionCode } from "./data"
 import { makeCreateShaderFunctionCode } from "./create"
+import { makeDestroyFunctionCode } from "./destroy"
 import { makePaintFunctionCode } from "./paint"
 import { makeUniformsCode, makeUniformsLocationsCode } from "./uniform"
 import {
@@ -28,6 +30,12 @@ ${
         : ""
 }
 ${indent(makeConstructorCode(options))}
+
+${indent(makeCreateDataArrayFunctionCode(options))}
+
+${indent(makePokeDataFunctionCode(options))}
+
+${indent(makeDestroyFunctionCode(options))}
 
 ${indent(makePaintFunctionCode(options))}
 
@@ -76,9 +84,9 @@ function replaceAll(text: string, source: RegExp, destination: string): string {
 
 function makeVertexCount(options: CodeOptions): string {
     if (!options.typescript) return ""
-    return options.drawElements
-        ? `/** Number of indexes to use in drawElements() */
-public elemCount = 0`
-        : `/** Number of vertices to use in drawArrays() */
-public vertCount = 0`
+    const code = [`private vertData = new Float32Array()
+private vertCount = 0`]
+    if (options.drawElements) code.push(`private elemData = new Uint16Array()
+private elemCount = 0`)
+    return code.join("\n")
 }

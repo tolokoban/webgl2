@@ -8,12 +8,12 @@ export function makeUniformsCode(options: CodeOptions): string {
 }
 
 export function makeUniformsLocationsCode(options: CodeOptions): string {
-    return options.attributes
+    return options.uniforms
         .map(
-            (att) =>
+            (uni) =>
                 `${options.typescript ? "private readonly" : "//"} _$${
-                    att.name
-                }: number`
+                    uni.name
+                }: WebGLUniformLocation`
         )
         .join("\n")
 }

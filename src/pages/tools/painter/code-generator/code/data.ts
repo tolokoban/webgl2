@@ -3,17 +3,39 @@ import { computeAttributesTotalLength } from "./attribute"
 
 export function makeCreateDataArrayFunctionCode(options: CodeOptions) {
     const { attributes } = options
-    if (attributes.length < 1) return '// No attributes.'
+    if (attributes.length < 1) return "// No attributes."
 
     const attributesLength = computeAttributesTotalLength(options)
-    return `public static createDataArray(vertexCount: number): Float32Array {
-    return new Float32Array(vertexCount * ${attributesLength})
+    const code = [
+        `public createVertDataArray(vertCount${
+            options.typescript ? `: number): void` : ")"
+        } {
+    this.vertCount = vertCount
+    this.vertData = new Float32Array(vertCount * ${attributesLength})
+}`,
+`public pushVertData() {
+    const { gl } = this
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.vertBuff)
+    gl.bufferData(gl.ARRAY_BUFFER, this.vertData, gl.STATIC_DRAW)
 }`
+    ]
+    if (options.drawElements) {
+        code.push(`public setElemDataArray(elemData${
+            options.typescript ? `: Uint16Array): void` : ")"
+        } {
+    const { gl } = this
+    this.elemCount = elemData.length
+    this.elemData = elemData
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.elemBuff)
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, elemData, gl.STATIC_DRAW)
+}`)
+    }
+    return code.join("\n")
 }
 
 export function makePokeDataFunctionCode(options: CodeOptions) {
     const { attributes } = options
-    if (attributes.length < 1) return '// No attributes.'
+    if (attributes.length < 1) return "// No attributes."
 
     const varNames: string[] = []
     for (const att of attributes) {
@@ -26,19 +48,19 @@ export function makePokeDataFunctionCode(options: CodeOptions) {
             varNames.push(`${name}_X`, `${name}_Y`, `${name}_Z`, `${name}_W`)
         else throw Error(`Unexpected size ${size} for attribute "${name}"!`)
     }
-    return `public static pokeData(
-    data: Float32Array,
+    return `public pokeVertData(
     vertexIndex: number,
-    ${varNames.map((name) => `${name}: number`).join(',\n    ')}
+    ${varNames.map((name) => `${name}: number`).join(",\n    ")}
 ) {
-    let index = vertexIndex * BasePainter.ATTRIBS_COUNT
-    ${varNames.map((name) => `data[index++] = ${name}`).join(',\n    ')}
+    let index = vertexIndex * ${options.className}.ATTRIBS_COUNT
+    const data = this.vertData
+    ${varNames.map((name) => `data[index++] = ${name}`).join(",\n    ")}
 }`
 }
 
 export function makeSwapDataFunctionCode(options: CodeOptions) {
     const { attributes } = options
-    if (attributes.length < 1) return '// No attributes.'
+    if (attributes.length < 1) return "// No attributes."
 
     const attributesLength = computeAttributesTotalLength(options)
     return `public static swapData(
@@ -46,24 +68,24 @@ export function makeSwapDataFunctionCode(options: CodeOptions) {
     indexA: number,
     indexB: number        
 ) {
-    let ptrA = indexA * BasePainter.ATTRIBS_COUNT
-    let ptrB = indexB * BasePainter.ATTRIBS_COUNT
+    let ptrA = indexA * ${options.className}.ATTRIBS_COUNT
+    let ptrB = indexB * ${options.className}.ATTRIBS_COUNT
     let tmp: number = 0
     ${repeat(
         attributesLength,
         `tmp = data[ptrA]
     data[ptrA++] = data[ptrB]
     data[ptrB++] = tmp`
-    ).join('\n    ')}
+    ).join("\n    ")}
 }`
 }
 
-export function makePushData(dynamicArray: boolean) {
+export function makePushData(options: CodeOptions) {
     return `public pushDataArray(data: Float32Array) {
     const { gl, vertBuff } = this
     gl.bindBuffer(gl.ARRAY_BUFFER, vertBuff)
     gl.bufferData(gl.ARRAY_BUFFER, data, ${
-        dynamicArray ? 'gl.DYNAMIC_DRAW' : 'gl.STATIC_DRAW'
+        false ? "gl.DYNAMIC_DRAW" : "gl.STATIC_DRAW"
     })
 }
 
@@ -74,7 +96,7 @@ export function makePushData(dynamicArray: boolean) {
 public pushDataSubArray(data: Float32Array, start: number, end: number) {
     const { gl, vertBuff } = this
     gl.bindBuffer(gl.ARRAY_BUFFER, vertBuff)
-    const N = BasePainter.ATTRIBS_COUNT
+    const N = ${options.className}.ATTRIBS_COUNT
     const subData = data.subarray(start * N, end * N)
     gl.bufferSubData(
         gl.ARRAY_BUFFER, 

@@ -2,6 +2,7 @@ import * as React from "react"
 import Button from "@/ui/view/button"
 import Checkbox from "@/ui/view/checkbox"
 import Code from "@/view/code"
+import Combo from "@/ui/view/simple-combo"
 import { makePainterClassCode } from "./code/class"
 import { ProgramAnalyse } from "@/webgl2/analyse-program"
 import { usePersistentState } from "@/tools/persistence"
@@ -11,6 +12,16 @@ export interface CodeGeneratorViewProps {
     className?: string
     project: string
     analyse: null | ProgramAnalyse
+}
+
+const PRIMITIVES = {
+    POINTS: "POINTS",
+    LINE_STRIP: "LINE_STRIP",
+    LINE_LOOP: "LINE_LOOP",
+    LINES: "LINES",
+    TRIANGLE_STRIP: "TRIANGLE_STRIP",
+    TRIANGLE_FAN: "TRIANGLE_FAN",
+    TRIANGLES: "TRIANGLES",
 }
 
 export default function CodeGeneratorView(props: CodeGeneratorViewProps) {
@@ -30,6 +41,11 @@ export default function CodeGeneratorView(props: CodeGeneratorViewProps) {
         "drawElements",
         false
     )
+    const [primitive, setPrimitive] = usePersistentState(
+        "painter-options",
+        "primitive",
+        "TRIANGLES"
+    )
     React.useEffect(() => {
         if (!props.analyse) return
 
@@ -44,9 +60,10 @@ export default function CodeGeneratorView(props: CodeGeneratorViewProps) {
                 minifyShaderCode: minify,
                 typescript,
                 drawElements,
+                primitive
             })
         )
-    }, [props.analyse, minify, typescript, drawElements])
+    }, [props.analyse, minify, typescript, drawElements, primitive])
     return (
         <div className={getClassNames(props)}>
             <header className="theme-color-frame">
@@ -56,14 +73,19 @@ export default function CodeGeneratorView(props: CodeGeneratorViewProps) {
                     onChange={setDrawElements}
                 />
                 <Checkbox
-                    label="Compresser le code des shaders"
+                    label="Minifier"
                     value={minify}
                     onChange={setMinify}
                 />
                 <Checkbox
-                    label="Générer du Typescript"
+                    label="Typescript"
                     value={typescript}
                     onChange={setTypescript}
+                />
+                <Combo
+                    options={PRIMITIVES}
+                    value={primitive}
+                    onChange={setPrimitive}
                 />
                 <Button label="Copier" onClick={() => copy(code)} />
                 <div>Ce code pèse <b>{code.length}</b> octets.</div>

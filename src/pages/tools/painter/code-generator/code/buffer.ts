@@ -1,8 +1,8 @@
 import { CodeOptions } from "./../types"
 
 export function makeBuffersCode(options: CodeOptions) {
-    const buffers = ["vertData"]
-    if (options.drawElements) buffers.push("vertElem")
+    const buffers = ["vert"]
+    if (options.drawElements) buffers.push("elem")
     return buffers
         .map(
             (name) =>

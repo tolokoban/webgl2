@@ -10,4 +10,5 @@ export interface CodeOptions {
     minifyShaderCode: boolean
     typescript: boolean
     drawElements: boolean
+    primitive: string
 }
