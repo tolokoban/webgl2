@@ -1,0 +1,68 @@
+.ui-view-TabstripView {
+    --tabstrip-bg: var(--theme-color-section);
+    --tabstrip-fg: var(--theme-color-on-section);
+}
+
+.ui-view-TabstripView > header {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-end;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+    color: inherit;
+}
+
+.ui-view-TabstripView > header > * {
+    flex: 1 1 auto;
+}
+
+.ui-view-TabstripView > header > button,
+.ui-view-TabstripView > header > button:hover {
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    font: inherit;
+    display: inline-flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border: none;
+    border-radius: 0.5rem 0.5rem 0 0;
+    font-variant: small-caps;
+    font-weight: bolder;
+    height: 2.25rem;
+    padding: 0 1rem;
+    cursor: pointer;
+    box-shadow: none;
+    transition: filter 0.2s;
+    filter: brightness(100%);
+    margin: 0;
+    background: transparent;
+    color: currentColor;
+}
+
+.ui-view-TabstripView > header > button:active {
+    filter: brightness(150%);
+}
+
+.ui-view-TabstripView > header > button.selected {
+    background-color: var(--tabstrip-bg);
+    color: var(--tabstrip-fg);
+    pointer-events: none;
+    cursor: default;
+}
+
+.ui-view-TabstripView > main {
+    background-color: var(--tabstrip-bg);
+    color: var(--tabstrip-fg);
+    padding: 0.5rem;
+}
+
+.ui-view-TabstripView > main > div {
+    display: none;
+}
+
+.ui-view-TabstripView > main > div.selected {
+    display: block;
+}

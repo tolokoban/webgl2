@@ -1,0 +1,47 @@
+.ui-view-SimpleComboView {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: stretch;
+    margin: 0.25rem;
+}
+
+.ui-view-SimpleComboView.wide {
+    display: flex;
+    width: 100%;
+}
+
+.ui-view-SimpleComboView select {
+    width: 100%;
+    line-height: 2rem;
+    height: 2rem;
+    border: none;
+    box-shadow: var(--theme-shadow-button);
+    padding: 0 0.5rem;
+    appearance: none;
+    position: relative;
+    z-index: 0;
+}
+
+.ui-view-SimpleComboView div.container {
+    position: relative;
+    padding: 0;
+    margin: 0;
+}
+
+.ui-view-SimpleComboView div.container > div.dropdown-button {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 1.5rem;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    border-left: 1px solid var(--theme-color-on-primary-opacity-25);
+    z-index: 1;
+}
+
+.ui-view-SimpleComboView select:focus {
+    background-color: var(--theme-color-accent-light);
+    color: var(--theme-color-on-accent-light);
+}

@@ -1,0 +1,6 @@
+div.tfw-view-InputFile {
+    display: contents;
+}
+div.tfw-view-InputFile > input {
+    display: none;
+}

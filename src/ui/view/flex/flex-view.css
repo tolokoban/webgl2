@@ -1,0 +1,28 @@
+div.ui-view-FlexView {
+    display: flex;
+}
+
+.ui-view-FlexView .flex-0 {
+    flex: 0 0 auto;
+}
+
+.ui-view-FlexView .flex-1 {
+    flex: 1 1 auto;
+}
+
+.ui-view-FlexView .flex-2 {
+    flex: 2 2 auto;
+}
+
+.ui-view-FlexView .flex-3 {
+    flex: 3 3 auto;
+}
+
+.ui-view-FlexView .flex-4 {
+    flex: 4 4 auto;
+}
+
+.ui-view-FlexView .flex-5 {
+    flex: 5 5 auto;
+}
+

@@ -1,0 +1,27 @@
+.view-inputImage-PreviewInputImage {
+    padding: 1rem;
+}
+
+.view-inputImage-PreviewInputImage canvas{
+    background-image: url(../back.jpg);
+    background-repeat: repeat;
+    margin: .5rem;
+}
+
+.view-inputImage-PreviewInputImage canvas.preview {
+    box-shadow: 0 2px 4px var(--theme-color-shadow);    
+}
+
+.view-inputImage-PreviewInputImage canvas.preview.selected {
+    box-shadow: 0 4px 8px var(--theme-color-shadow);
+    outline: 2px solid var(--theme-color-accent);
+    transform: translateY(-2px);
+}
+
+.view-inputImage-PreviewInputImage > header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+}

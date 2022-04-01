@@ -1,0 +1,8 @@
+.view-CodeView {
+    overflow: auto;
+}
+
+.view-CodeView pre {
+    margin: 0;
+    font-size: 80%;
+}

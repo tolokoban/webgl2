@@ -1,0 +1,17 @@
+.ui-view-OptionsView > div.options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    border-radius: .5rem;
+    overflow: hidden;
+}
+
+.ui-view-OptionsView > div.options > .button {
+    margin: 0;
+    padding: .125rem .5rem;
+    flex: 1 1 auto;
+    box-shadow: 0 0 1px currentColor;
+    display: grid;
+    place-items: center;
+}

@@ -1,0 +1,30 @@
+.view-ShaderCodeEditorView {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 0;
+}
+
+.view-ShaderCodeEditorView > * {
+    flex: 1 1 auto;
+}
+
+.view-ShaderCodeEditorView > header {
+    padding: .25em 1em;
+    border-radius: .5em .5em 0 0;
+}
+
+.view-ShaderCodeEditorView > header,
+.view-ShaderCodeEditorView > pre.theme-color-error {
+    flex: 0 0 auto;
+}
+
+.view-ShaderCodeEditorView > pre.theme-color-error {
+    font-size: 80%;
+    padding: 1em;
+    max-height: 40vh;
+    overflow: auto;
+    margin: 0;
+    white-space: pre-wrap;
+}

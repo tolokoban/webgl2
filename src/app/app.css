@@ -1,0 +1,52 @@
+.App {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.App > div.body {
+    position: absolute;
+    left: 0;
+    top: 2rem;
+    width: 100%;
+    bottom: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.App > div.body > * {
+    position: absolute;
+    left: .5rem;
+    top: .5rem;
+    right: .5rem;
+    bottom: .5rem;
+    margin: 0;
+    padding: 0;
+}
+
+
+.App > nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 2rem;
+    margin: 0;
+    padding: 1rem;
+    overflow: auto;
+    transition: transform .2s;
+    transform: translateX(calc(1rem - 100%));
+}
+
+.App > nav.show {
+    transform: translateX(0);
+}

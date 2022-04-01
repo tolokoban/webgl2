@@ -1,0 +1,18 @@
+.ui-view-input-TimeView {
+    display: flex inline;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.ui-view-input-TimeView > div.row {
+    display: flex inline;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.ui-view-input-TimeView > div.row > div {
+    flex: 1 0 auto;
+    margin: 0;
+}

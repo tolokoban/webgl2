@@ -1,0 +1,10 @@
+div.pages-tools-painter-PainterTools {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;    
+}
+
+div.pages-tools-painter-PainterTools > * {
+    flex: 1 1 auto;
+}

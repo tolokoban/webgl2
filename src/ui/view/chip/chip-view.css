@@ -1,0 +1,75 @@
+.ui-view-ChipView {
+    font: inherit;
+    border: none;
+    box-shadow: none;
+    text-decoration: none;
+    display: inline-flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: .25rem;
+    cursor: pointer;
+    border-radius: 200vmax;
+    font-size: 80%;
+}
+
+.ui-view-ChipView > svg {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.ui-view-ChipView > div.thumbnail {
+    overflow: hidden;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+}
+
+.ui-view-ChipView > div.label {
+    margin: 0 .5rem;
+}
+
+.ui-view-ChipView.color-primary {
+    background-color: var(--theme-color-primary);
+    color: var(--theme-color-on-primary);
+}
+.ui-view-ChipView.color-primary-light {
+    background-color: var(--theme-color-primary-light);
+    color: var(--theme-color-on-primary-light);
+}
+.ui-view-ChipView.color-primary-dark {
+    background-color: var(--theme-color-primary-dark);
+    color: var(--theme-color-on-primary-dark);
+}
+.ui-view-ChipView.color-accent {
+    background-color: var(--theme-color-accent);
+    color: var(--theme-color-on-accent);
+}
+.ui-view-ChipView.color-accent-light {
+    background-color: var(--theme-color-accent-light);
+    color: var(--theme-color-on-accent-light);
+}
+.ui-view-ChipView.color-accent-dark {
+    background-color: var(--theme-color-accent-dark);
+    color: var(--theme-color-on-accent-dark);
+}
+.ui-view-ChipView.color-background {
+    background-color: var(--theme-color-background);
+    color: var(--theme-color-on-background);
+}
+.ui-view-ChipView.color-frame {
+    background-color: var(--theme-color-frame);
+    color: var(--theme-color-on-frame);
+}
+.ui-view-ChipView.color-section {
+    background-color: var(--theme-color-section);
+    color: var(--theme-color-on-section);
+}
+.ui-view-ChipView.color-input {
+    background-color: var(--theme-color-input);
+    color: var(--theme-color-on-input);
+}
+.ui-view-ChipView.color-error {
+    background-color: var(--theme-color-error);
+    color: var(--theme-color-on-error);
+}

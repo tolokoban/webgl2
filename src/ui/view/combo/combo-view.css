@@ -1,0 +1,11 @@
+.ui-view-ComboView {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.ui-view-ComboView.wide {
+    display: flex;
+    width: 100%;
+}

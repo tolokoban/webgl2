@@ -1,0 +1,9 @@
+.ui-view-DragAndDropView {
+    margin: 0;
+    padding: 0;
+}
+
+.ui-view-DragAndDropView.droppable {
+    outline: 0.125em dotted var(--theme-color-accent);
+    outline-offset: 0.125em;
+}

@@ -1,0 +1,27 @@
+.pages-tools-painter-CodeGeneratorView {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    margin: 0.5em 0;
+}
+
+.pages-tools-painter-CodeGeneratorView > header {
+    padding: 0.25em 1em;
+    border-radius: 0.5em 0.5em 0 0;
+    flex: 0 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1em;
+}
+
+.pages-tools-painter-CodeGeneratorView > pre {
+    font-size: 80%;
+    overflow: auto;
+    white-space: pre-wrap;
+    flex: 1 1 auto;
+    padding: 1em;
+}

@@ -1,0 +1,30 @@
+.ui-view-ComboLang-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ui-view-ComboLang-item > div:first-child {
+    flex: 1 1 auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ui-view-ComboLang-item > div:last-child {
+    order: -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background-color: var(--theme-color-on-primary);
+    color: var(--theme-color-primary);
+    font-weight: 900;
+    font-size: 70%;
+    text-transform: uppercase;
+    width: 1.6rem;
+    height: 1.6rem;
+    margin: 0 .5rem 0 0;
+}

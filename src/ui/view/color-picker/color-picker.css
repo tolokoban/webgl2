@@ -1,0 +1,85 @@
+div.tfw-view-ColorPicker {
+    display: block;
+    max-width: 340px;
+    --wheel-size: 300px;
+}
+
+div.tfw-view-ColorPicker > header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+}
+
+div.tfw-view-ColorPicker > header > * {
+    flex: 0 0 auto;
+}
+
+div.tfw-view-ColorPicker > header > *:nth-child(1) {
+    flex: 1 1 auto;
+    max-width: 200px;
+}
+
+div.tfw-view-ColorPicker > div.flex {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: stretch;
+    margin: 0.25rem 0;
+}
+
+div.tfw-view-ColorPicker > div.flex > div {
+    margin: 1px;
+    padding: 0;
+    position: relative;
+    cursor: pointer;
+}
+
+div.tfw-view-ColorPicker > div.info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+div.tfw-view-ColorPicker > div.flex > div.wheel {
+    flex: 0 0 auto;
+    width: var(--wheel-size);
+    height: var(--wheel-size);
+    min-width: var(--wheel-size);
+    min-height: var(--wheel-size);
+    background-image: url('./wheel.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    overflow: visible;
+}
+
+div.tfw-view-ColorPicker > div.flex > div.bar {
+    width: 16px;
+    height: var(--wheel-size);
+    overflow: hidden;
+    margin: 0 0 0 1rem;
+}
+
+div.tfw-view-ColorPicker > div.flex > div.wheel > div.disk {
+    position: absolute;
+    border-radius: 100%;
+    width: 16px;
+    height: 16px;
+    margin: -8px;
+    border: 1px solid #000;
+    pointer-events: none;
+}
+
+div.tfw-view-ColorPicker > div.flex > div.bar > div.cursor {
+    background: linear-gradient(to right, #0008, #fff8, #fff8, #0008);
+    width: 100%;
+    height: 4px;
+    margin: -2px 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+}

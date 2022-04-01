@@ -1,0 +1,12 @@
+.pages-tools-painter-ProgramCodeEditorView {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 0.5em;
+    padding: .5em;
+}
+
+.pages-tools-painter-ProgramCodeEditorView > * {
+    flex: 1 1 auto;
+}

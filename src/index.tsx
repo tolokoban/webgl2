@@ -1,9 +1,24 @@
-import App from "./App"
+import App from "./app"
+import Color from "@/ui/color"
 import React from "react"
 import ReactDOM from "react-dom"
+import Theme from "@/ui/theme"
 import "./index.css"
 
 function start() {
+    Theme.apply({
+        colors: {
+            black: "#000",
+            white: "#fff",
+            error: "#f30",
+            input: "#fff",
+            section: "#ddd",
+            frame: "#bbb",
+            screen: "#999",
+            primary: Theme.shade("#9cd"),
+            accent: Theme.shade("#f80")
+        }
+    })
     console.log("VERSION", React.version)
     // Use the following as soon as Types are available for React 18.
     // ReactDOM.createRoot(document.getElementById("ROOT")).render(

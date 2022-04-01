@@ -163,6 +163,10 @@ module.exports = {
                 type: "json",
                 use: "yaml-loader",
             },
+            {
+                test: /\.md$/,
+                type: "asset/source",
+            },
         ],
     },
 };

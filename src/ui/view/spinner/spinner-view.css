@@ -1,0 +1,29 @@
+.ui-view-SpinnerView {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1em;
+}
+
+.ui-view-SpinnerView > .spin {
+    flex: 0 0 auto;
+    animation: ui-view-SpinnerView-anim 1s linear infinite;
+}
+
+@keyframes ui-view-SpinnerView-anim {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.ui-view-SpinnerView > .label {
+    flex: 1 1 auto;
+    opacity: 0.5;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
