@@ -3,15 +3,17 @@ import CodeGenerator from "./code-generator"
 import CodeOptionsView from "./code-options"
 import ProgramCodeEditor from "./program-code-editor"
 import TabStrip from "@/ui/view/tabstrip"
-import { CodeOptions } from "./code-generator/types"
+import { CodeOptions, isCodeOptions } from "./code-generator/types"
 import { ProgramAnalyse } from "@/webgl2/analyse-program"
 import { usePersistentState } from "@/tools/persistence"
 import "./painter-tools.css"
 
 const DEFAULT_CODE_OPTIONS: CodeOptions = {
     attributes: [],
+    attributesDivisors: {},
     className: "Painter",
     drawElements: false,
+    elementsSize: "UNSIGNED_SHORT",
     fragCode: "",
     minifyShaderCode: true,
     primitive: "TRIANGLES",
@@ -25,10 +27,11 @@ export default function PainterTools() {
     const [options, setOptions] = usePersistentState<CodeOptions>(
         "code-options",
         "project",
-        DEFAULT_CODE_OPTIONS
+        DEFAULT_CODE_OPTIONS,
+        isCodeOptions
     )
     const [analyse, setAnalyse] = React.useState<null | ProgramAnalyse>(null)
-    React.useEffect(()=>{
+    React.useEffect(() => {
         if (!analyse) return
 
         setOptions({
@@ -36,7 +39,7 @@ export default function PainterTools() {
             vertCode: analyse.vertCode,
             fragCode: analyse.fragCode,
             attributes: analyse.attributes,
-            uniforms: analyse.uniforms,            
+            uniforms: analyse.uniforms,
         })
     }, [analyse])
     return (

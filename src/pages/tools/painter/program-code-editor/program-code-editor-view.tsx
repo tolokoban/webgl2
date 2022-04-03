@@ -1,7 +1,8 @@
 import * as React from "react"
-import DB, { usePersistentState } from "@/tools/persistence"
 import ShaderCodeEditor from "@/view/shader-code-editor"
 import { analyseProgram, ProgramAnalyse } from "@/webgl2/analyse-program"
+import { isString } from "@/tools/type-guards"
+import { usePersistentState } from "@/tools/persistence"
 import "./program-code-editor-view.css"
 
 export interface ProgramCodeEditorViewProps {
@@ -16,19 +17,21 @@ export default function ProgramCodeEditorView(
     const [vertCode, setVertCode] = usePersistentState(
         "vert-code",
         props.project,
-        ""
+        "",
+        isString
     )
     const [vertError, setVertError] = React.useState<null | string>("")
     const [fragCode, setFragCode] = usePersistentState(
         "frag-code",
         props.project,
-        ""
+        "",
+        isString
     )
     const [fragError, setFragError] = React.useState<null | string>("")
     React.useEffect(() => {
         const analyse = analyseProgram({
-            vert: vertCode,
-            frag: fragCode,
+            vert: ensureGLSL300(vertCode),
+            frag: ensureGLSL300(fragCode),
         })
         setVertError(analyse.vertError)
         setFragError(analyse.fragError)
@@ -41,13 +44,13 @@ export default function ProgramCodeEditorView(
             <ShaderCodeEditor
                 label="Vertex Shader"
                 error={vertError}
-                value={vertCode}
+                value={ensureGLSL300(vertCode)}
                 onChange={setVertCode}
             />
             <ShaderCodeEditor
                 label="Fragment Shader"
                 error={fragError}
-                value={fragCode}
+                value={ensureGLSL300(fragCode)}
                 onChange={setFragCode}
             />
         </div>
@@ -62,3 +65,9 @@ function getClassNames(props: ProgramCodeEditorViewProps): string {
 
     return classNames.join(" ")
 }
+
+function ensureGLSL300(fragCode: string): string {
+    if (fragCode.startsWith("#version 300 es\n")) return fragCode
+    return `#version 300 es\n\n${fragCode}`
+}
+

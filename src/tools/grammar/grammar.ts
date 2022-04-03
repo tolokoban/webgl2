@@ -93,7 +93,6 @@ const TYPES = [
 ]
 
 const KEYWORDS = [
-    "attribute",
     "centroid",
     "const",
     "discard",
@@ -114,7 +113,6 @@ const KEYWORDS = [
     "smooth",
     "subroutine",
     "uniform",
-    "varying",
     // Reserved for future.
     "active",
     "asm",
@@ -186,7 +184,6 @@ const GLOBALS = [
     "gl_DepthRange.diff",
     "gl_DepthRange.far",
     "gl_DepthRange.near",
-    "gl_FragColor",
     "gl_FragCoord",
     "gl_FragDepth",
     "gl_FrontFacing",

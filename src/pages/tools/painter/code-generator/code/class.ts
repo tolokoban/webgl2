@@ -1,4 +1,5 @@
 import { CodeOptions } from "../types"
+import { getArrayTypeForElement } from "../../common"
 import { indent } from "./common"
 import { makeBuffersCode } from "./buffer"
 import { makeConstructorCode } from "./constructor"
@@ -86,7 +87,7 @@ function makeVertexCount(options: CodeOptions): string {
     if (!options.typescript) return ""
     const code = [`private vertData = new Float32Array()
 private vertCount = 0`]
-    if (options.drawElements) code.push(`private elemData = new Uint16Array()
+    if (options.drawElements) code.push(`private elemData = new ${getArrayTypeForElement(options)}()
 private elemCount = 0`)
     return code.join("\n")
 }

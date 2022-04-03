@@ -2,8 +2,8 @@ import * as React from "react"
 import Checkbox from "@/ui/view/checkbox"
 import Combo from "@/ui/view/simple-combo"
 import InputInteger from "@/ui/view/input/integer"
-import options from "../../../../ui/view/options"
 import { CodeOptions } from "../code-generator/types"
+import { getDivisorForAttibute, setDivisorForAttibute } from "../common"
 import "./code-options-view.css"
 
 const PRIMITIVES = {
@@ -23,9 +23,10 @@ export interface CodeOptionsViewProps {
 }
 
 export default function CodeOptionsView(props: CodeOptionsViewProps) {
+    const options = props.value
     const update = (value: Partial<CodeOptions>) => {
         props.onChange({
-            ...props.value,
+            ...options,
             ...value,
         })
     }
@@ -33,22 +34,33 @@ export default function CodeOptionsView(props: CodeOptionsViewProps) {
         <div className={getClassNames(props)}>
             <Combo
                 options={PRIMITIVES}
-                value={props.value.primitive}
+                value={options.primitive}
                 onChange={(primitive) => update({ primitive })}
             />
             <Checkbox
                 label="drawElements"
-                value={props.value.drawElements}
+                value={options.drawElements}
                 onChange={(drawElements) => update({ drawElements })}
             />
+            {options.drawElements && (
+                <Combo
+                    options={{
+                        UNSIGNED_BYTE: "Byte (256)",
+                        UNSIGNED_SHORT: "Short (65'535)",
+                        UNSIGNED_INT: "Int (4'294'967'297)",
+                    }}
+                    value={options.elementsSize}
+                    onChange={(elementsSize) => update({ elementsSize })}
+                />
+            )}
             <Checkbox
                 label="Minifier"
-                value={props.value.minifyShaderCode}
+                value={options.minifyShaderCode}
                 onChange={(minifyShaderCode) => update({ minifyShaderCode })}
             />
             <Checkbox
                 label="Typescript"
-                value={props.value.typescript}
+                value={options.typescript}
                 onChange={(typescript) => update({ typescript })}
             />
             <h1>Attributes</h1>
@@ -56,14 +68,23 @@ export default function CodeOptionsView(props: CodeOptionsViewProps) {
                 <div className="hint">Type</div>
                 <div className="hint">Nom</div>
                 <div className="hint">Diviseur</div>
-                {props.value.attributes.map((att) => (
+                {options.attributes.map((att) => (
                     <>
                         <div key={`${att.name}-1`}>{att.type}</div>
                         <div key={`${att.name}-2`}>
                             <b>{att.name}</b>
                         </div>
                         <div key={`${att.name}-3`}>
-                            <InputInteger value={2} />
+                            <InputInteger
+                                value={getDivisorForAttibute(att.name, options)}
+                                onChange={(divisor) =>
+                                    setDivisorForAttibute(
+                                        att.name,
+                                        options,
+                                        divisor
+                                    )
+                                }
+                            />
                         </div>
                     </>
                 ))}
@@ -73,7 +94,7 @@ export default function CodeOptionsView(props: CodeOptionsViewProps) {
                 <div className="hint">Type</div>
                 <div className="hint">Nom</div>
                 <div className="hint">Valeur</div>
-                {props.value.uniforms.map((uni) => (
+                {options.uniforms.map((uni) => (
                     <>
                         <div key={`${uni.name}-1`}>{uni.type}</div>
                         <div key={`${uni.name}-2`}>

@@ -1,5 +1,6 @@
 import { CodeOptions } from "./../types"
 import { computeAttributesTotalLength } from "./attribute"
+import { getArrayTypeForElement } from "../../common"
 
 export function makeCreateDataArrayFunctionCode(options: CodeOptions) {
     const { attributes } = options
@@ -21,7 +22,7 @@ export function makeCreateDataArrayFunctionCode(options: CodeOptions) {
     ]
     if (options.drawElements) {
         code.push(`public setElemDataArray(elemData${
-            options.typescript ? `: Uint16Array): void` : ")"
+            options.typescript ? `: ${getArrayTypeForElement(options)}): void` : ")"
         } {
     const { gl } = this
     this.elemCount = elemData.length

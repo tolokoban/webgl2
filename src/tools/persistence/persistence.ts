@@ -33,11 +33,14 @@ function makeKey(table: string, key: string): string {
 export function usePersistentState<T>(
     table: string,
     key: string,
-    defaultValue: T
+    defaultValue: T,
+    validator: (value: unknown) => value is T
 ): [value: T, setValue: (value: T) => void] {
     const [value, setValue] = React.useState<T>(defaultValue)
-    React.useEffect(()=>{
-        DB.get(table, key, defaultValue).then(setValue)
+    React.useEffect(() => {
+        DB.get(table, key, defaultValue).then(v => {
+            setValue(validator(v) ? v : defaultValue)
+        })
     }, [defaultValue])
     return [
         value,

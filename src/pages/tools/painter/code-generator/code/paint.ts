@@ -11,7 +11,7 @@ ${indent(makeBindAttributesCode(options))}
 ${indent(
     options.drawElements
         ? `gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.elemBuff)
-gl.drawElements(gl.${options.primitive}, this.elemCount, gl.UNSIGNED_SHORT, 0)`
+gl.drawElements(gl.${options.primitive}, this.elemCount, gl.${options.elementsSize}, 0)`
         : `gl.drawArrays(gl.${options.primitive}, 0, this.vertCount)`
 )}
 }`
