@@ -12,9 +12,9 @@ function start() {
             white: "#fff",
             error: "#f30",
             input: "#fff",
-            section: "#ddd",
-            frame: "#bbb",
-            screen: "#999",
+            section: "#eee",
+            frame: "#ddd",
+            screen: "#aaa",
             primary: Theme.shade("#9cd"),
             accent: Theme.shade("#f80")
         }

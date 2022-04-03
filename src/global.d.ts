@@ -41,3 +41,18 @@ declare module "*.md" {
     const value: string
     export default value
 }
+
+declare module "*.vert" {
+    const value: string
+    export default value
+}
+
+declare module "*.frag" {
+    const value: string
+    export default value
+}
+
+declare module "*.code" {
+    const value: string
+    export default value
+}

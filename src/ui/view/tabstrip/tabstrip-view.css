@@ -1,9 +1,15 @@
 .ui-view-TabstripView {
     --tabstrip-bg: var(--theme-color-section);
     --tabstrip-fg: var(--theme-color-on-section);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 0;
 }
 
 .ui-view-TabstripView > header {
+    flex: 0 0 auto;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -54,9 +60,11 @@
 }
 
 .ui-view-TabstripView > main {
+    flex: 1 1 auto;
     background-color: var(--tabstrip-bg);
     color: var(--tabstrip-fg);
     padding: 0.5rem;
+    overflow: auto;
 }
 
 .ui-view-TabstripView > main > div {

@@ -164,7 +164,7 @@ module.exports = {
                 use: "yaml-loader",
             },
             {
-                test: /\.md$/,
+                test: /\.(md|vert|frag|code)$/,
                 type: "asset/source",
             },
         ],

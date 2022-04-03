@@ -1,5 +1,5 @@
 import * as React from "react"
-import Markdown from "markdown-to-jsx"
+import Markdown from "@/view/markdown"
 import WelcomeContent from "./welcome.md"
 import "./welcome.css"
 
@@ -9,9 +9,9 @@ export interface WelcomeProps {
 }
 
 export default function Welcome(props: WelcomeProps) {
-    return <div className={getClassNames(props)}>
+    return <article className={getClassNames(props)}>
         <Markdown>{WelcomeContent}</Markdown>
-    </div>
+    </article>
 }
 
 

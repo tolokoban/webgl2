@@ -1,0 +1,10 @@
+.pages-tools-painter-CodeOptionsView div.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    gap: 0.5em;
+    place-items: center start;
+}
+
+.pages-tools-painter-CodeOptionsView div.grid-3 > div.hint {
+    opacity: 0.5;
+}
