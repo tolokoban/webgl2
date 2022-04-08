@@ -1,21 +1,19 @@
 import { CodeOptions } from "../types"
-import { UniformDescription } from "@/webgl2/analyse-program/uniforms"
+import { getDivisorForAttibute } from "../../common"
+import { indent } from "./common"
+import { makeBindAttributesCode } from "./attribute"
 
 export function makeConstructorCode(options: CodeOptions) {
-    return `${
-        options.typescript
-            ? `constructor(
+    const hasInstances =
+        options.attributes.filter(
+            (att) => getDivisorForAttibute(att.name, options) > 0
+        ).length > 0
+    return `constructor(
     public readonly gl: WebGL2RenderingContext,
-    private readonly onPaint: (painter: ${options.className}, time: number) => void
-) {`
-            : `/**
- * @param {WebGL2RenderingContext} gl
- * @param {(painter: ${options.className}, time: number) => void} painter
- */
-constructor(gl, onPaint) {
-    this.gl = gl
-    this.onPaint = onPaint`
+    public vertCount: number${
+        hasInstances ? ",\n    public instCount: number" : ""
     }
+) {
     const prg = gl.createProgram()
     if (!prg) throw Error("Unable to create a WebGL Program!")
     ${options.className}.createShader(gl, prg, gl.VERTEX_SHADER, ${
@@ -26,9 +24,8 @@ constructor(gl, onPaint) {
     }.FRAG)
     gl.linkProgram(prg)
     this.prg = prg
-    ${makeBuffersCode(options)}
-    ${makeAttributesLocationsCode(options)}
     ${makeUniformsLocationsCode(options)}
+${indent(makeBindAttributesCode(options))}
 }`
 }
 
@@ -38,16 +35,7 @@ function makeUniformsLocationsCode(options: CodeOptions) {
             (uni) =>
                 `this._$${uni.name} = gl.getUniformLocation(prg, "${
                     uni.name
-                }")${options.typescript ? " as WebGLUniformLocation" : ""}`
-        )
-        .join("\n    ")
-}
-
-function makeAttributesLocationsCode(options: CodeOptions) {
-    return options.attributes
-        .map(
-            (att) =>
-                `this._${att.name} = gl.getAttribLocation(prg, "${att.name}")`
+                }") as WebGLUniformLocation`
         )
         .join("\n    ")
 }

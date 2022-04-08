@@ -16,7 +16,7 @@ export default function BasicPerspective(props: BasicPerspectiveProps) {
     return (
         <article className={getClassNames(props)}>
             <Markdown># Perspective basique</Markdown>
-            <Scene className="full-width" onInit={render} />
+            <Scene className="full-width" play={true} onInit={render} />
             <Markdown>{Content}</Markdown>
             <Code className="left" label="Vertex Shader" lang="glsl" value={VertShader} />
             <Code className="right" label="Fragment Shader" lang="glsl" value={FragShader} />

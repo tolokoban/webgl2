@@ -1,10 +1,17 @@
 import * as React from "react"
 import Checkbox from "@/ui/view/checkbox"
+import Code from "@/view/code"
 import Combo from "@/ui/view/simple-combo"
 import InputInteger from "@/ui/view/input/integer"
 import { CodeOptions } from "../code-generator/types"
-import { getDivisorForAttibute, setDivisorForAttibute } from "../common"
+import { UniformDescription } from "@/webgl2/analyse-program/uniforms"
 import "./code-options-view.css"
+import {
+    getDivisorForAttibute,
+    getDynamicModeForAttibute,
+    setDivisorForAttibute,
+    setDynamicModeForAttibute,
+} from "../common"
 
 const PRIMITIVES = {
     POINTS: "POINTS",
@@ -58,50 +65,64 @@ export default function CodeOptionsView(props: CodeOptionsViewProps) {
                 value={options.minifyShaderCode}
                 onChange={(minifyShaderCode) => update({ minifyShaderCode })}
             />
-            <Checkbox
-                label="Typescript"
-                value={options.typescript}
-                onChange={(typescript) => update({ typescript })}
-            />
             <h1>Attributes</h1>
             <div className="grid-3">
-                <div className="hint">Type</div>
+                <div
+                    className="hint"
+                    title="Les attributes dynamiques sont susceptibles d'être mis à jour souvent"
+                >
+                    Dynamique
+                </div>
                 <div className="hint">Nom</div>
                 <div className="hint">Diviseur</div>
                 {options.attributes.map((att) => (
                     <>
-                        <div key={`${att.name}-1`}>{att.type}</div>
+                        <div key={`${att.name}-1`}>
+                            <Checkbox
+                                value={getDynamicModeForAttibute(
+                                    att.name,
+                                    options
+                                )}
+                                onChange={(dynamic) => {
+                                    setDynamicModeForAttibute(
+                                        att.name,
+                                        options,
+                                        dynamic
+                                    )
+                                    update({ ...options })
+                                }}
+                            />
+                        </div>
                         <div key={`${att.name}-2`}>
                             <b>{att.name}</b>
                         </div>
-                        <div key={`${att.name}-3`}>
+                        <div key={`${att.name}-3`} title={att.type}>
                             <InputInteger
+                                className="small-input"
                                 value={getDivisorForAttibute(att.name, options)}
-                                onChange={(divisor) =>
+                                onChange={(divisor) => {
                                     setDivisorForAttibute(
                                         att.name,
                                         options,
                                         divisor
                                     )
-                                }
+                                    update({ ...options })
+                                }}
                             />
                         </div>
                     </>
                 ))}
             </div>
             <h1>Uniforms</h1>
-            <div className="grid-3">
-                <div className="hint">Type</div>
-                <div className="hint">Nom</div>
-                <div className="hint">Valeur</div>
+            <div>
                 {options.uniforms.map((uni) => (
-                    <>
-                        <div key={`${uni.name}-1`}>{uni.type}</div>
-                        <div key={`${uni.name}-2`}>
-                            <b>{uni.name}</b>
-                        </div>
-                        <div key={`${uni.name}-3`}>...</div>
-                    </>
+                    <Code
+                        key={`${uni.name}`}
+                        label={`${uni.type} ${uni.name}`}
+                        expanded={false}
+                        lang="typescript"
+                        value={getExampleCodeForUniform(uni)}
+                    />
                 ))}
             </div>
         </div>
@@ -115,4 +136,29 @@ function getClassNames(props: CodeOptionsViewProps): string {
     }
 
     return classNames.join(" ")
+}
+
+function getExampleCodeForUniform(uni: UniformDescription): string {
+    switch (uni.type) {
+        case "SAMPLER_2D":
+            return `const texture: WebGLTexture = gl.createTexture()
+...
+painter.$${uni.name}(texture)`
+        case "FLOAT":
+            return `painter.$${uni.name}(${100 * Math.random()})`
+        case "FLOAT_VEC2":
+            return `painter.$${uni.name}(${100 * Math.random()}, ${
+                100 * Math.random()
+            })`
+        case "FLOAT_VEC3":
+            return `painter.$${uni.name}(${100 * Math.random()}, ${
+                100 * Math.random()
+            }, ${100 * Math.random()})`
+        case "FLOAT_VEC4":
+            return `painter.$${uni.name}(${100 * Math.random()}, ${
+                100 * Math.random()
+            }, ${100 * Math.random()}, ${100 * Math.random()})`
+        default:
+            return `// Pas encore supporté : ${uni.type}`
+    }
 }

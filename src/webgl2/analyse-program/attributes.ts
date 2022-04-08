@@ -16,7 +16,7 @@ export function listAttributes(
     const count = gl.getProgramParameter(prg, gl.ACTIVE_ATTRIBUTES) as number
     for (let index = 0; index < count; index++) {
         const attribute = gl.getActiveAttrib(prg, index)
-        if (!attribute) continue
+        if (!attribute || ["gl_InstanceID"].includes(attribute.name)) continue
 
         const atomicSize = figureOutAttributeSize(gl, attribute)
         if (atomicSize === 0)

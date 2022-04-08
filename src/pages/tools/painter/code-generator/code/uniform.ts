@@ -11,7 +11,7 @@ export function makeUniformsLocationsCode(options: CodeOptions): string {
     return options.uniforms
         .map(
             (uni) =>
-                `${options.typescript ? "private readonly" : "//"} _$${
+                `private readonly _$${
                     uni.name
                 }: WebGLUniformLocation`
         )

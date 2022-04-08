@@ -11,13 +11,13 @@ import "./painter-tools.css"
 const DEFAULT_CODE_OPTIONS: CodeOptions = {
     attributes: [],
     attributesDivisors: {},
+    attributesDynamicModes: {},
     className: "Painter",
     drawElements: false,
     elementsSize: "UNSIGNED_SHORT",
     fragCode: "",
     minifyShaderCode: true,
     primitive: "TRIANGLES",
-    typescript: true,
     uniforms: [],
     vertCode: "",
 }
@@ -26,7 +26,7 @@ export default function PainterTools() {
     const [project, setProject] = React.useState("main")
     const [options, setOptions] = usePersistentState<CodeOptions>(
         "code-options",
-        "project",
+        project,
         DEFAULT_CODE_OPTIONS,
         isCodeOptions
     )

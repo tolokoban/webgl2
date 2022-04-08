@@ -304,12 +304,12 @@ const GLSL: Prism.Grammar = {
             /(^|[^\w$])(?:NaN|Infinity|0[bB][01]+(?:_[01]+)*n?|0[oO][0-7]+(?:_[0-7]+)*n?|0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?|\d+(?:_\d+)*n|(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?)(?![\w$])/,
         lookbehind: true,
     },
-    type: {
-        pattern: new RegExp(`(${TYPES.join("|")})(?=[^a-zA-Z0-9_])`),
-    },
-    keyword: {
-        pattern: new RegExp(`(${KEYWORDS.join("|")})(?=[^a-zA-Z0-9_])`),
-    },
-    global: new RegExp(`(${GLOBALS.join("|")})(?=[^a-zA-Z0-9_])`),
-    function: new RegExp(`(${FUNCTIONS.join("|")})(?=[^a-zA-Z0-9_])`),
+    type: makeIdentifiersRX(TYPES),
+    keyword: makeIdentifiersRX(KEYWORDS),
+    global: makeIdentifiersRX(GLOBALS),
+    function: makeIdentifiersRX(FUNCTIONS),
+}
+
+function makeIdentifiersRX(words: string[]): RegExp {
+    return new RegExp(`(?:[^a-zA-Z0-9_])(${words.join("|")})(?=[^a-zA-Z0-9_])`)
 }

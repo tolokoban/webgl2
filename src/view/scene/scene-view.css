@@ -1,6 +1,38 @@
 .view-SceneView {
-    width: 640px;
-    height: 480px;
+    margin: 0.5em;
+}
+
+.view-SceneView > footer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}   
+
+.view-SceneView > canvas {
+    width: calc(100% - 1em);
     max-width: calc(100vw - 1rem);
+    width: 100%;
+    height: 480px;
     max-height: 90vmin;
+}
+
+.view-SceneView.small > canvas {
+    height: 240px;
+}
+
+.view-SceneView > canvas.fullscreen,
+.view-SceneView.small > canvas.fullscreen {
+    z-index: 999999;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    max-width: none;
+    max-height: none;
 }

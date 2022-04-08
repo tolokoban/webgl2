@@ -1,9 +1,7 @@
 import { CodeOptions } from "../types"
 
 export function makeCreateShaderFunctionCode(options: CodeOptions) {
-    return `${options.typescript ? 
-        "private static createShader(gl: WebGL2RenderingContext, prg: WebGLProgram, type: number, code: string) {" :
-        "static createShader(gl, prg, type, code) {"}
+    return `private static createShader(gl: WebGL2RenderingContext, prg: WebGLProgram, type: number, code: string) {
     const shader = gl.createShader(type)
     if (!shader) throw Error("Unable to create WebGL Shader!")
 

@@ -20,9 +20,7 @@ export default function CodeGeneratorView(props: CodeGeneratorViewProps) {
     return (
         <div className={getClassNames(props)}>
             <Code
-                label={`Code ${
-                    props.options.typescript ? "Typescript" : "Javascript"
-                } du Painter (${code.length} octets)`}
+                label={`Code du Painter (${code.length} octets)`}
                 value={code}
                 lang="typescript"
             />

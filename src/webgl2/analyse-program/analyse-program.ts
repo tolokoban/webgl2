@@ -23,7 +23,7 @@ export function analyseProgram(code: ShaderCode) {
         vertError: null,
         fragError: null,
         uniforms: [],
-        attributes: []
+        attributes: [],
     }
     try {
         const gl = createWebGLContext()
@@ -37,6 +37,7 @@ export function analyseProgram(code: ShaderCode) {
         }
         analyse.uniforms = listUniforms(gl, prg)
         analyse.attributes = listAttributes(gl, prg)
+        console.log('🚀 [analyse-program] analyse.attributes = ', analyse.attributes) // @FIXME: Remove this line written on 2022-04-06 at 19:46
     } catch (ex) {
         const msg = getExceptionMessage(ex)
         if (msg.startsWith("<VERT>"))

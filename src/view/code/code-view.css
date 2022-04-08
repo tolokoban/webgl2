@@ -2,7 +2,8 @@
     overflow: auto;
     border-radius: .5rem;
     margin: 2px;
-    width: calc(min(640px, 100vw));
+    max-width: calc(100vw - 1em);
+    margin: 1em 0;
 }
 
 .view-CodeView pre {
@@ -14,6 +15,10 @@
 .view-CodeView.expanded pre {
     display: block;
     white-space: pre-wrap;
+}
+
+.view-CodeView pre code {
+    background: #eee;
 }
 
 .view-CodeView > header {

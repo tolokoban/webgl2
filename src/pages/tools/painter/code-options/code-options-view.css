@@ -8,3 +8,7 @@
 .pages-tools-painter-CodeOptionsView div.grid-3 > div.hint {
     opacity: 0.5;
 }
+
+.pages-tools-painter-CodeOptionsView .small-input {
+    width: 3em;
+}

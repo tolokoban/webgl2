@@ -1,0 +1,32 @@
+//#region 1
+/**
+ * Considérons que la page HTML contient un élément de ce type:
+ * <canvas id="mon-canvas"></canvas>
+ */
+const canvas = document.getElementById("mon-canvas")
+
+// On obtient un contect WebGL2 comme ceci :
+const gl = canvas.getContext("webgl2")
+//#endregion 1
+
+//#region 2
+function paint(time: number) {
+    const rouge = Math.abs(Math.cos(time * 0.0005115))
+    const vert = Math.abs(Math.cos(time * 0.0008172))
+    const bleu = Math.abs(Math.cos(time * 0.0006131))
+    const opacite = 1
+    gl.clearColor(rouge, vert, bleu, opacite)
+    gl.clear(gl.COLOR_BUFFER_BIT)
+}
+//#endregion 2
+
+//#region 3
+function anim(time: number) {
+    window.requestAnimationFrame(anim)
+    paint(time)
+}
+
+// Il faut la lancer au moins une fois
+window.requestAnimationFrame(anim)
+//#endregion 3
+

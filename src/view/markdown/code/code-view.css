@@ -1,0 +1,4 @@
+.view-markdown-CodeView code {
+    color: var(--theme-color-on-accent-light);
+    background-color: var(--theme-color-accent-light);
+}

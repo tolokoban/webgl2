@@ -1,0 +1,14 @@
+.ui-view-SliderView {
+    min-width: 2rem;
+    margin: 0 1rem;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.ui-view-SliderView.wide {
+    width: calc(100% - 2rem);
+}
+

@@ -1,9 +1,9 @@
 import App from "./app"
-import Color from "@/ui/color"
 import React from "react"
 import ReactDOM from "react-dom"
 import Theme from "@/ui/theme"
 import "./index.css"
+import "./fonts/dosis.css"
 
 function start() {
     Theme.apply({

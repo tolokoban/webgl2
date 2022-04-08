@@ -20,3 +20,15 @@
     padding: 0.25em 0.5em;
     text-align: center;
 }
+
+.view-MarkdownView code {
+    color: var(--theme-color-on-accent-light);
+    background-color: var(--theme-color-accent-light);
+}
+
+.view-MarkdownView blockquote {
+    color: var(--theme-color-on-section);
+    background-color: var(--theme-color-section);
+    padding: 1em;
+    font-style: italic;
+}

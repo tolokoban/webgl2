@@ -13,9 +13,9 @@ export interface CodeOptions {
     uniforms: UniformDescription[]
     attributes: AttributeDescription[]
     attributesDivisors: { [attName: string]: number }
+    attributesDynamicModes: { [attName: string]: boolean }
     className: string
     minifyShaderCode: boolean
-    typescript: boolean
     drawElements: boolean
     elementsSize: string // "UNSIGNED_BYTE" | "UNSIGNED_SHORT" | "UNSIGNED_INT"
     primitive: string
@@ -29,13 +29,17 @@ export function isCodeOptions(data: unknown): data is CodeOptions {
         assertString(data.className, "data.className")
         assertString(data.primitive, "data.primitive")
         assertBoolean(data.minifyShaderCode, "data.minifyShaderCode")
-        assertBoolean(data.typescript, "data.typescript")
         assertBoolean(data.drawElements, "data.drawElements")
         assertArray(data.uniforms, "data.uniforms")
         assertArray(data.attributes, "data.attributes")
         assertObject(data.attributesDivisors, "data.attributesDivisors")
+        assertObject(data.attributesDynamicModes, "data.attributesDynamicModes")
         assertString(data.elementsSize, "data.elementsSize")
-        if (!["UNSIGNED_BYTE", "UNSIGNED_SHORT" ,"UNSIGNED_INT"].includes(data.elementsSize)) {
+        if (
+            !["UNSIGNED_BYTE", "UNSIGNED_SHORT", "UNSIGNED_INT"].includes(
+                data.elementsSize
+            )
+        ) {
             throw Error("Invalid data.elementsSize!")
         }
         return true

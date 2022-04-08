@@ -1,10 +1,12 @@
 import * as React from "react"
+import Checkbox from "@/ui/view/checkbox"
 import "./scene-view.css"
 
 export type PaintFunc = (time: number) => void
 
 export interface SceneViewProps {
     className?: string
+    play?: boolean
     /**
      * Called when the canvas is ready and WebGL2 context available.
      * @returns A function to call everytime we need to repaint the canvas.
@@ -14,6 +16,12 @@ export interface SceneViewProps {
 }
 
 export default function SceneView(props: SceneViewProps) {
+    const refPlay = React.useRef(props.play ?? false)
+    const [animate, setAnimate] = React.useState(refPlay.current)
+    const [fullscreen, setFullscreen] = React.useState(false)
+    React.useEffect(() => {
+        refPlay.current = animate
+    }, [animate])
     const refCanvas = React.useCallback((node: HTMLCanvasElement | null) => {
         if (!node) return
 
@@ -28,7 +36,14 @@ export default function SceneView(props: SceneViewProps) {
             .then((paint) => {
                 let lastWidth = 0
                 let lastHeight = 0
+                // `stopTime` and `shiftTime` are used to allow pausing the animation.
+                // If we just don't render images for some time, the time still goes on.
+                // Then, when we resume rendering, there will be a jump in time.
+                // With these variables, we ensure that we resume when we paused.
+                let stopTime = 0
+                let shiftTime = 0
                 const { canvas } = gl
+                let play = true
                 const anim = (time: number) => {
                     window.requestAnimationFrame(anim)
                     const width = Math.ceil(canvas.clientWidth)
@@ -39,19 +54,45 @@ export default function SceneView(props: SceneViewProps) {
                         canvas.width = width
                         canvas.height = height
                         gl.viewport(0, 0, width, height)
-                        console.log(width, height)
+                        paint(stopTime + shiftTime)
                     }
-                    paint(time)
+                    if (play) {
+                        paint(time + shiftTime)
+                    }
+                    if (play !== refPlay.current) {
+                        play = refPlay.current
+                        if (play) {
+                            shiftTime += stopTime - time
+                        } else {
+                            stopTime = time
+                        }
+                    }
                 }
                 window.requestAnimationFrame(anim)
             })
             .catch(console.error)
     }, [])
-    return <canvas className={getClassNames(props)} ref={refCanvas}></canvas>
+    return (
+        <div className={getClassNames(props)}>
+            <canvas
+                className={fullscreen ? "fullscreen" : "theme-shadow-button"}
+                ref={refCanvas}
+                onDoubleClick={() => setFullscreen(!fullscreen)}
+            ></canvas>
+            <footer>
+                <p>Double-clic pour passer en plein écran (et revenir)</p>
+                <Checkbox
+                    label="Animer"
+                    value={animate}
+                    onChange={setAnimate}
+                />
+            </footer>
+        </div>
+    )
 }
 
 function getClassNames(props: SceneViewProps): string {
-    const classNames = ["custom", "view-SceneView", "theme-shadow-button"]
+    const classNames = ["custom", "view-SceneView"]
     if (typeof props.className === "string") {
         classNames.push(props.className)
     }

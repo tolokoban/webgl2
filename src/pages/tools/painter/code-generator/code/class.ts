@@ -1,17 +1,20 @@
+import { capitalize } from "@/tools/strings"
 import { CodeOptions } from "../types"
 import { getArrayTypeForElement } from "../../common"
 import { indent } from "./common"
+import { makeAttributesGroups } from "./attribute"
 import { makeBuffersCode } from "./buffer"
 import { makeConstructorCode } from "./constructor"
-import { makeCreateDataArrayFunctionCode, makePokeDataFunctionCode } from "./data"
 import { makeCreateShaderFunctionCode } from "./create"
 import { makeDestroyFunctionCode } from "./destroy"
 import { makePaintFunctionCode } from "./paint"
 import { makeUniformsCode, makeUniformsLocationsCode } from "./uniform"
 import {
-    makeAttribsCountStaticCode,
-    makeAttributesLocationsCode,
-} from "./attribute"
+    makeCreateDataArrayFunctionCode,
+    makePokeDataFunctionCode,
+    makePushData,
+    makeSwapDataFunctionCode,
+} from "./data"
 
 export function makePainterClassCode(options: CodeOptions): string {
     const dateFormatter = new Intl.DateTimeFormat("fr")
@@ -20,21 +23,20 @@ export function makePainterClassCode(options: CodeOptions): string {
  */
 export default class ${options.className} {
 ${indent(makeBuffersCode(options))}
-${indent(makeAttributesLocationsCode(options))}    
-${indent(makeUniformsLocationsCode(options))}    
-${indent(makeAttribsCountStaticCode(options))}
-${indent(makeVertexCount(options))}
-${
-    options.typescript
-        ? `    private readonly prg: WebGLProgram
-`
-        : ""
-}
+${indent(makeVertexArrayObject(options))}
+${indent(makeUniformsLocationsCode(options))}
+${indent(makeVertexAndInstanceFloat32Arrays(options))}
+    private readonly prg: WebGLProgram
+
 ${indent(makeConstructorCode(options))}
 
 ${indent(makeCreateDataArrayFunctionCode(options))}
 
+${indent(makePushData(options))}
+
 ${indent(makePokeDataFunctionCode(options))}
+
+${indent(makeSwapDataFunctionCode(options))}
 
 ${indent(makeDestroyFunctionCode(options))}
 
@@ -44,12 +46,12 @@ ${indent(makeUniformsCode(options))}
 
 ${indent(makeCreateShaderFunctionCode(options))}
 
-    static ${options.typescript ? "readonly " : ""}VERT = \`${
+    static readonly VERT = \`${
         options.minifyShaderCode
             ? compressGLSL(options.vertCode)
             : options.vertCode
     }\`
-    static ${options.typescript ? "readonly " : ""}FRAG = \`${
+    static readonly FRAG = \`${
         options.minifyShaderCode
             ? compressGLSL(options.fragCode)
             : options.fragCode
@@ -83,11 +85,26 @@ function replaceAll(text: string, source: RegExp, destination: string): string {
     return text.split(source).join(destination)
 }
 
-function makeVertexCount(options: CodeOptions): string {
-    if (!options.typescript) return ""
-    const code = [`private vertData = new Float32Array()
-private vertCount = 0`]
-    if (options.drawElements) code.push(`private elemData = new ${getArrayTypeForElement(options)}()
-private elemCount = 0`)
+function makeVertexAndInstanceFloat32Arrays(options: CodeOptions): string {
+    const code: string[] = []
+    const groups = makeAttributesGroups(options)
+    for (const group of groups) {
+        code.push(
+            `private readonly ${group.baseName}Data: Float32Array`, 
+            `/**`,
+            ` * Détermine quel${group.divisor>0 ? " vertex": "le instance"} la fonction`,
+            ` * \`poke${capitalize(group.baseName)}Data()\` met à jour.`,
+            ` * Il s'incrémente à chaque appel de \`poke${capitalize(group.baseName)}Data()\``,
+            ` */`,
+            `public ${group.baseName}Cursor = 0`)
+    }
+    if (options.drawElements)
+        code.push(
+            `private readonly elemData: ${getArrayTypeForElement(options)}`
+        )
     return code.join("\n")
+}
+
+function makeVertexArrayObject(options: CodeOptions): string {
+    return "private readonly vertArray: WebGLVertexArrayObject"
 }

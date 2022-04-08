@@ -7,19 +7,24 @@ class Persistence {
         key: string,
         defaultValue: unknown
     ): Promise<unknown> {
+        console.log("[DB]", table, key, ">GET>")
         const content = window.localStorage.getItem(makeKey(table, key))
         if (content === null) return defaultValue
 
         try {
             const data = JSON5.parse(content)
+            console.log(data)
             return data
         } catch (ex) {
+            console.log(content)
             console.error(ex)
             return defaultValue
         }
     }
 
     async set(table: string, key: string, value: unknown): Promise<void> {
+        console.log("[DB]", table, key, "<SET<")
+        console.log(value)
         window.localStorage.setItem(makeKey(table, key), JSON5.stringify(value))
     }
 }
