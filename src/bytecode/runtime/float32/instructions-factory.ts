@@ -78,7 +78,7 @@ const FACTORY = {
      * Pop a Float32 from the stack and push its absolute value.
      */
     abs: () => (data: DataView, pointer: number) => {
-        data.setUint8(pointer, Code.SQR_F32)
+        data.setUint8(pointer, Code.ABS_F32)
         return 1
     },
     /**
