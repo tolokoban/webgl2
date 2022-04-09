@@ -1,0 +1,12 @@
+export const PUSH_F32 = 1
+export const GET_F32 = 2
+export const ADD_F32 = 3
+export const SUB_F32 = 4
+export const MUL_F32 = 5
+export const DIV_F32 = 6
+export const MAX_F32 = 7
+export const MIN_F32 = 8
+export const POW_F32 = 9
+export const SQR_F32 = 10
+export const ABS_F32 = 11
+export const IFF_F32 = 12
