@@ -1,20 +1,24 @@
+#version 300 es
+
+// (0,0) pour le centre de la carte.
+uniform vec2 uniCenter;
+// Facteur de zoom.
 uniform float uniScale;
-uniform float uniAspectRatio;
-uniform float uniShift;
+// Pente : 0 pour pas de perspective, 1 pour forte pente.
+uniform float uniSlope;
+// canvasl.width / canvas.height
+uniform float uniRatio;
 
-attribute vec2 attPos;
-attribute vec2 attUV;
+in vec2 attPoint;
+in vec2 attUV;
 
-varying vec2 varUV;
-varying float varLight;
+out vec2 varUV;
 
 void main() {
-    varUV = attUV + vec2(uniShift, 0.0);
-    varLight = attUV.y < 0.5 ? 1.0 / (uniScale * uniScale) : 1.0;
-    gl_Position = vec4( 
-        attPos.x * uniScale, 
-        attPos.y * uniAspectRatio, 
-        1.0, 
-        attUV.y < 0.5 ? uniScale : 1.0
-    );
+  vec2 point = (attPoint - uniCenter) * uniScale;
+  varUV = attUV;
+  point.y *= uniRatio;
+  float w = uniSlope * point.y + 1.0;
+  float z = 0.0;
+  gl_Position = vec4(point, z, w);
 }

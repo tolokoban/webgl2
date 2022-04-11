@@ -11,19 +11,19 @@ export interface ModalOptions {
     /** Message to display */
     content: ModalContent
     align?:
-        | ''
-        | 'L'
-        | 'R'
-        | 'T'
-        | 'B'
-        | 'BL'
-        | 'LB'
-        | 'BR'
-        | 'BL'
-        | 'TL'
-        | 'LT'
-        | 'TR'
-        | 'TL'
+        | ""
+        | "L"
+        | "R"
+        | "T"
+        | "B"
+        | "BL"
+        | "LB"
+        | "BR"
+        | "BL"
+        | "TL"
+        | "LT"
+        | "TR"
+        | "TL"
     padding?: string
     transitionDuration?: number
     /**
@@ -42,19 +42,19 @@ export interface ModalOptions {
 interface FullModalOptions {
     content: ModalContent
     align:
-        | ''
-        | 'L'
-        | 'R'
-        | 'T'
-        | 'B'
-        | 'BL'
-        | 'LB'
-        | 'BR'
-        | 'BL'
-        | 'TL'
-        | 'LT'
-        | 'TR'
-        | 'TL'
+        | ""
+        | "L"
+        | "R"
+        | "T"
+        | "B"
+        | "BL"
+        | "LB"
+        | "BR"
+        | "BL"
+        | "TL"
+        | "LT"
+        | "TR"
+        | "TL"
     padding: string
     transitionDuration: number
     /**
@@ -121,8 +121,8 @@ export default class Modal extends AbstractModal {
         super()
         const options = normalizeContent(content)
         this.options = {
-            align: '',
-            padding: '1rem',
+            align: "",
+            padding: "1rem",
             transitionDuration: 300,
             autoClosable: true,
             onClose() {},
@@ -130,7 +130,7 @@ export default class Modal extends AbstractModal {
         }
         this.autoClosable = options.autoClosable ?? true
         const screen = createScreen(this.options)
-        const frame = document.createElement('div')
+        const frame = document.createElement("div")
         screen.appendChild(frame)
         this.screen = screen
         this.frame = frame
@@ -147,20 +147,20 @@ export default class Modal extends AbstractModal {
         // have the screen detached immediatly after you attached it.
         window.clearTimeout(this.detachScreenTimeoutId)
         window.document.body.appendChild(screen)
-        window.setTimeout(() => screen.classList.add('show'))
-        screen.addEventListener('click', this.handleScreenClick, false)
-        document.addEventListener('keydown', this.handleKeyDown, true)
+        window.setTimeout(() => screen.classList.add("show"))
+        screen.addEventListener("click", this.handleScreenClick, false)
+        document.addEventListener("keydown", this.handleKeyDown, true)
         return true
     }
 
     protected actualHide(autoClose: boolean) {
         const { screen, options } = this
-        screen.classList.remove('show')
+        screen.classList.remove("show")
         this.detachScreenTimeoutId = window.setTimeout(() => {
             window.document.body.removeChild(screen)
         }, options.transitionDuration)
-        screen.removeEventListener('click', this.handleScreenClick, false)
-        document.removeEventListener('keydown', this.handleKeyDown, true)
+        screen.removeEventListener("click", this.handleScreenClick, false)
+        document.removeEventListener("keydown", this.handleKeyDown, true)
         if (autoClose) {
             // `onClose` is called only if the modal has not been closed
             // using the `hide()` method.
@@ -184,7 +184,7 @@ export default class Modal extends AbstractModal {
      */
     private readonly handleKeyDown = (evt: KeyboardEvent) => {
         if (!this.options.autoClosable) return
-        if (evt.key !== 'Escape') return
+        if (evt.key !== "Escape") return
 
         this.autoClose()
     }
@@ -201,9 +201,7 @@ export default class Modal extends AbstractModal {
                     <Dialog
                         colorOK={options.colorOK}
                         title={options.title}
-                        labelOK={
-                            options.labelOK ?? options.title ?? "OK"
-                        }
+                        labelOK={options.labelOK ?? options.title ?? "OK"}
                         labelCancel={options.labelCancel ?? "Cancel"}
                         onOK={() => hide(true)}
                         onCancel={() => hide(false)}
@@ -255,11 +253,7 @@ export default class Modal extends AbstractModal {
                 autoClosable: false,
                 ...options,
                 content: (
-                    <Dialog
-                        hideCancel={true}
-                        labelOK="OK"
-                        onOK={hide}
-                    >
+                    <Dialog hideCancel={true} labelOK="OK" onOK={hide}>
                         <div className="ui-Modal-error">
                             {getHumanFriendlyErrorContent(options.content)}
                         </div>
@@ -288,7 +282,7 @@ export default class Modal extends AbstractModal {
                 ...options,
                 content: (
                     <div className="ui-Modal-promise-waiter">
-                        {IconFactory.make('refresh')}
+                        {IconFactory.make("refresh")}
                         {options.content}
                     </div>
                 ),
@@ -309,34 +303,34 @@ export default class Modal extends AbstractModal {
 }
 
 function createScreen(options: FullModalOptions) {
-    const screen = document.createElement('div')
-    screen.classList.add('ui-Modal')
-    addClassesForAlign(screen, options.align ?? '')
+    const screen = document.createElement("div")
+    screen.classList.add("ui-Modal")
+    addClassesForAlign(screen, options.align ?? "")
     applyPadding(screen, options.padding)
     applyTransition(screen, options.transitionDuration)
     return screen
 }
 
 function addClassesForAlign(screen: HTMLDivElement, align: string) {
-    const items = align.split('')
-    if (items.includes('L')) screen.classList.add('align-left')
-    if (items.includes('R')) screen.classList.add('align-right')
-    if (items.includes('T')) screen.classList.add('align-top')
-    if (items.includes('B')) screen.classList.add('align-bottom')
+    const items = align.split("")
+    if (items.includes("L")) screen.classList.add("align-left")
+    if (items.includes("R")) screen.classList.add("align-right")
+    if (items.includes("T")) screen.classList.add("align-top")
+    if (items.includes("B")) screen.classList.add("align-bottom")
 }
 
 function applyPadding(screen: HTMLDivElement, padding: string) {
-    screen.style.setProperty('--padding', padding)
+    screen.style.setProperty("--padding", padding)
 }
 
 function applyTransition(screen: HTMLDivElement, transitionDuration: number) {
     screen.style.setProperty(
-        '--transition-duration',
+        "--transition-duration",
         `${Math.floor(transitionDuration)}ms`
     )
 }
 
-type ModalContent = string | Error | JSX.Element | JSX.Element[] | null | boolean
+type ModalContent = React.ReactNode
 
 function normalizeContent<T extends { content: ModalContent }>(
     content: ModalContent | T
@@ -362,9 +356,9 @@ function isModalContent(
  * ```
  */
 function getHumanFriendlyErrorContent(content: unknown): JSX.Element {
-    if (typeof content === 'string') return <p>{content}</p>
+    if (typeof content === "string") return <p>{content}</p>
     if (content instanceof Error) return <p>{content.message}</p>
-    if (typeof content === 'object' && React.isValidElement(content))
+    if (typeof content === "object" && React.isValidElement(content))
         return content
-    return <pre>{JSON5.stringify(content, null, '  ')}</pre>
+    return <pre>{JSON5.stringify(content, null, "  ")}</pre>
 }

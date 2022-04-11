@@ -21,7 +21,7 @@ if (typeof package.port !== "number") {
 
 module.exports = {
     cache: {
-        type: "memory"
+        type: "memory",
     },
     output: {
         filename: "./scr/[name].[contenthash].js",
@@ -60,26 +60,26 @@ module.exports = {
         new CleanWebpackPlugin({
             // We don't want to remove the "index.html" file
             // after the incremental build triggered by watch.
-            cleanStaleWebpackAssets: false
+            cleanStaleWebpackAssets: false,
         }),
         new CopyPlugin({
             patterns: [
                 {
                     from: Path.resolve(__dirname, "public"),
-                    filter: async path => {
+                    filter: async (path) => {
                         return !path.endsWith("index.html")
-                    }
-                }
-            ]
+                    },
+                },
+            ],
         }),
         new HtmlWebpackPlugin({
             meta: {
                 viewport:
-                    'width=device-width, initial-scale=1, shrink-to-fit=no',
-                'theme-color': '#56abff',
+                    "width=device-width, initial-scale=1, shrink-to-fit=no",
+                "theme-color": "#56abff",
             },
-            template: 'public/index.html',
-            filename: 'index.html',
+            template: "public/index.html",
+            filename: "index.html",
             title: package.name,
             version: package.version,
             minify: {
@@ -119,13 +119,13 @@ module.exports = {
                 test: /\.tsx?$/,
                 use: [
                     {
-                        loader: 'ts-loader',
+                        loader: "ts-loader",
                         options: {
-                            transpileOnly: false
+                            transpileOnly: false,
                         },
                     },
                 ],
-                exclude: /node_modules/
+                exclude: /node_modules/,
             },
             {
                 test: /\.css$/,
@@ -160,7 +160,6 @@ module.exports = {
             },
             {
                 test: /\.ya?ml$/,
-                type: "json",
                 use: "yaml-loader",
             },
             {
@@ -169,4 +168,4 @@ module.exports = {
             },
         ],
     },
-};
+}

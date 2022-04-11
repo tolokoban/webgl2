@@ -1,6 +1,7 @@
 import * as React from "react"
 import Button from "../button"
 import Icon from "../icon"
+import reactSimpleCodeEditor from "react-simple-code-editor"
 import { ColorName } from "../types"
 import "./dialog-view.css"
 
@@ -14,7 +15,7 @@ export interface DialogViewProps {
     valid?: boolean
     /** Use flat button for cancel, or if there is only one button. */
     flat?: boolean
-    children: JSX.Element | JSX.Element[] | string | null | boolean | Error
+    children: React.ReactNode
     /** Triggered when __OK__ button has been clicked */
     onOK?(): void
     /** Triggered when __Cancel__ button has been clicked */
@@ -98,7 +99,9 @@ function getClassNames(props: DialogViewProps): string {
     return classNames.join(" ")
 }
 
-function extractErrorMessageIfNeeded(children: string | boolean | JSX.Element | JSX.Element[] | Error | null): React.ReactNode {
+function extractErrorMessageIfNeeded(
+    children: React.ReactNode | Error
+): React.ReactNode {
     if (children instanceof Error) return children.message
+    return children as React.ReactNode
 }
-
