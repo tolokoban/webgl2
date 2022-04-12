@@ -2,9 +2,10 @@ import * as React from "react"
 import Code from "@/view/code"
 import Content from "./content.md"
 import FragShader from "./basic-perspective.frag"
-import ImageURL from "./map.webp"
+import MapURL from "./map.webp"
 import Markdown from "@/view/markdown"
 import Painter from "./painter"
+import PinURL from "./pin.png"
 import Scene, { PaintFunc } from "@/view/scene"
 import Slider from "@/ui/view/slider"
 import VertShader from "./basic-perspective.vert"
@@ -23,10 +24,10 @@ interface Reference {
 
 export default function BasicPerspective(props: BasicPerspectiveProps) {
     const ref = React.useRef<Reference>({
-        slope: 0,
+        slope: 30,
         scale: 200,
         x: 0,
-        y: 0
+        y: 0,
     })
     const [slope, setSlope] = React.useState(ref.current.slope)
     const [scale, setScale] = React.useState(ref.current.scale)
@@ -112,6 +113,8 @@ function makeRender(ref: React.MutableRefObject<Reference>): any {
         const ctx = canvas.getContext("2d")
         if (!ctx) throw Error("Unable to get Canvas 2D context!")
 
+        let hitX = 0
+        let hitY = 0
         gl.canvas.addEventListener("click", (evt) => {
             const { left, top, width, height } =
                 gl.canvas.getBoundingClientRect()
@@ -128,6 +131,8 @@ function makeRender(ref: React.MutableRefObject<Reference>): any {
             console.log("🚀 [basic-perspective] p = ", p) // @FIXME: Remove this line written on 2022-04-11 at 20:58
             const y = Cy + Y / (s * r * (1 - p * Y))
             const x = Cx + X / s + X * r * p * (y - Cy)
+            hitX = x
+            hitY = y
             console.log("🚀 [basic-perspective] y = ", y) // @FIXME: Remove this line written on 2022-04-11 at 17:39
             const canvasX = canvas.width * (1 + x) * 0.5
             const canvasY = canvas.height * (1 - y) * 0.5
@@ -141,6 +146,7 @@ function makeRender(ref: React.MutableRefObject<Reference>): any {
             ctx.moveTo(canvasX, 0)
             ctx.lineTo(canvasX, canvas.height)
             ctx.stroke()
+            gl.bindTexture(gl.TEXTURE_2D, texMap)
             gl.texImage2D(
                 gl.TEXTURE_2D,
                 0,
@@ -152,10 +158,10 @@ function makeRender(ref: React.MutableRefObject<Reference>): any {
         })
         ctx.fillStyle = "orange"
         ctx.fillText("Hello World!", 1000, 600)
-        const texture = gl.createTexture()
-        if (!texture) throw Error("Unable to create a texture!")
+        const texMap = gl.createTexture()
+        if (!texMap) throw Error("Unable to create a texture!")
 
-        gl.bindTexture(gl.TEXTURE_2D, texture)
+        gl.bindTexture(gl.TEXTURE_2D, texMap)
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false)
         gl.texImage2D(
             gl.TEXTURE_2D,
@@ -169,10 +175,10 @@ function makeRender(ref: React.MutableRefObject<Reference>): any {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
 
         const img = new Image()
-        img.src = ImageURL
+        img.src = MapURL
         img.onload = () => {
-            console.log("🚀 [basic-perspective] img = ", img) // @FIXME: Remove this line written on 2022-04-11 at 16:35
             ctx.drawImage(img, 0, 0)
+            gl.bindTexture(gl.TEXTURE_2D, texMap)
             gl.texImage2D(
                 gl.TEXTURE_2D,
                 0,
@@ -183,26 +189,72 @@ function makeRender(ref: React.MutableRefObject<Reference>): any {
             )
         }
 
-        const painter = new Painter(gl, 4)
+        const texPin = gl.createTexture()
+        if (!texPin) throw Error("Unable to create a texture!")
 
-        painter.pokeVertStaticData(-1, -1, 0, 1)
-        painter.pokeVertStaticData(+1, -1, 1, 1)
-        painter.pokeVertStaticData(-1, +1, 0, 0)
-        painter.pokeVertStaticData(+1, +1, 1, 0)
-        painter.pushVertStaticArray()
+        const imgPin = new Image()
+        imgPin.src = PinURL
+        imgPin.onload = () => {
+            gl.bindTexture(gl.TEXTURE_2D, texPin)
+            gl.texImage2D(
+                gl.TEXTURE_2D,
+                0,
+                gl.RGBA,
+                gl.RGBA,
+                gl.UNSIGNED_BYTE,
+                imgPin
+            )
+        }
+
+        gl.bindTexture(gl.TEXTURE_2D, texPin)
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false)
+        gl.texImage2D(
+            gl.TEXTURE_2D,
+            0,
+            gl.RGBA,
+            gl.RGBA,
+            gl.UNSIGNED_BYTE,
+            imgPin
+        )
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+
+        const painterFloor = new Painter(gl, 4)
+        painterFloor.pokeVertStaticData(-1, -1, 0, 0, 1)
+        painterFloor.pokeVertStaticData(+1, -1, 0, 1, 1)
+        painterFloor.pokeVertStaticData(-1, +1, 0, 0, 0)
+        painterFloor.pokeVertStaticData(+1, +1, 0, 1, 0)
+        painterFloor.pushVertStaticArray()
+
+        const painterVertical = new Painter(gl, 4)
+        painterVertical.pokeVertStaticData(-0.1, 0, -0.0, 0, 1)
+        painterVertical.pokeVertStaticData(+0.1, 0, -0.0, 1, 1)
+        painterVertical.pokeVertStaticData(-0.1, 0, +0.2, 0, 0)
+        painterVertical.pokeVertStaticData(+0.1, 0, +0.2, 1, 0)
+        painterVertical.pushVertStaticArray()
+
         gl.clearColor(0, 0.6777, 1, 1)
 
         return new Promise<PaintFunc>((resolve) => {
-            resolve((time) =>
-                painter.paint(time, (p: Painter, time: number) => {
+            resolve((time) => {
+                painterFloor.paint(time, (p: Painter, time: number) => {
                     gl.clear(gl.COLOR_BUFFER_BIT)
-                    p.$uniTex(texture)
+                    p.$uniTex(texMap)
                     p.$uniScale(ref.current.scale * 0.01)
                     p.$uniRatio(gl.drawingBufferWidth / gl.drawingBufferHeight)
                     p.$uniCenter(ref.current.x * 0.01, ref.current.y * 0.01)
                     p.$uniSlope(ref.current.slope * 0.01)
                 })
-            )
+                painterVertical.paint(time, (p: Painter, time: number) => {
+                    gl.enable(gl.BLEND)
+                    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+                    p.$uniTex(texPin)
+                    p.$uniScale(ref.current.scale * 0.01)
+                    p.$uniRatio(gl.drawingBufferWidth / gl.drawingBufferHeight)
+                    p.$uniCenter(ref.current.x * 0.01-hitX, ref.current.y * 0.01-hitY)
+                    p.$uniSlope(ref.current.slope * 0.01)
+                })
+            })
         })
     }
 }
