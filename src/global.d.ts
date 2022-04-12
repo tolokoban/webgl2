@@ -31,6 +31,11 @@ declare module "*.webp" {
     export = value
 }
 
+declare module "*.yaml" {
+    const value: any
+    export = value
+}
+
 declare module "*.css" {
     // Loaded as URL.
     const content: string

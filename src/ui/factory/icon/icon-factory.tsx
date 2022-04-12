@@ -1,9 +1,9 @@
+import ICONS from "./icons.yaml"
+import React from "react"
 /**
  * We can found material icons here:
  * https://materialdesignicons.com/
  */
-import React from "react"
-const ICONS = require('./icons.yaml') as {[key: string]: string}
 
 const DEFAULT_ICON: JSX.Element = (
     <svg viewBox="0 0 24 24" preserveAspectRatio="meet xMidYMid">
