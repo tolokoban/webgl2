@@ -17,19 +17,27 @@ export interface BasicPerspectiveProps {
 interface Reference {
     slope: number
     scale: number
+    x: number
+    y: number
 }
 
 export default function BasicPerspective(props: BasicPerspectiveProps) {
     const ref = React.useRef<Reference>({
         slope: 0,
         scale: 200,
+        x: 0,
+        y: 0
     })
     const [slope, setSlope] = React.useState(ref.current.slope)
     const [scale, setScale] = React.useState(ref.current.scale)
+    const [x, setX] = React.useState(ref.current.x)
+    const [y, setY] = React.useState(ref.current.y)
     React.useEffect(() => {
         ref.current.slope = slope
         ref.current.scale = scale
-    }, [slope, scale])
+        ref.current.x = x
+        ref.current.y = y
+    }, [slope, scale, x, y])
     const render = React.useCallback(makeRender(ref), [ref])
     return (
         <article className={getClassNames(props)}>
@@ -50,6 +58,24 @@ export default function BasicPerspective(props: BasicPerspectiveProps) {
                 steps={1}
                 value={scale}
                 onChange={setScale}
+            />
+            <Slider
+                label={`X : ${x} %`}
+                wide={true}
+                min={-100}
+                max={100}
+                steps={1}
+                value={x}
+                onChange={setX}
+            />
+            <Slider
+                label={`Y : ${y} %`}
+                wide={true}
+                min={-100}
+                max={100}
+                steps={1}
+                value={y}
+                onChange={setY}
             />
             <Scene className="full-width" play={true} onInit={render} />
             <Markdown>{Content}</Markdown>
@@ -92,8 +118,8 @@ function makeRender(ref: React.MutableRefObject<Reference>): any {
             const X = (2 * (evt.clientX - left)) / width - 1
             const Y = 1 - (2 * (evt.clientY - top)) / height
             console.log("🚀 [basic-perspective] Y = ", Y) // @FIXME: Remove this line written on 2022-04-11 at 17:28
-            const Cx = 0
-            const Cy = 0
+            const Cx = ref.current.x * 0.01
+            const Cy = ref.current.y * 0.01
             const r = gl.drawingBufferWidth / gl.drawingBufferHeight
             const s = ref.current.scale * 0.01
             const p = ref.current.slope * 0.01
@@ -173,7 +199,7 @@ function makeRender(ref: React.MutableRefObject<Reference>): any {
                     p.$uniTex(texture)
                     p.$uniScale(ref.current.scale * 0.01)
                     p.$uniRatio(gl.drawingBufferWidth / gl.drawingBufferHeight)
-                    p.$uniCenter(0, 0)
+                    p.$uniCenter(ref.current.x * 0.01, ref.current.y * 0.01)
                     p.$uniSlope(ref.current.slope * 0.01)
                 })
             )
