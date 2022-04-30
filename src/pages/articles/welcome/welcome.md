@@ -12,6 +12,8 @@
 * Utiliser des éléments pour économiser du Vertex
 * Instances
   * [Comment ça marche ?](#article/instances)
+* Effets
+  * [Voronoi](#article/voronoi)
 * 3D
   * Perspective
     * [Perspective basique](#article/basic-perspective)

@@ -44,12 +44,17 @@ export default function PainterTools() {
     }, [analyse])
     return (
         <div className="pages-tools-painter-PainterTools">
-            <TabStrip className="tab-strip" headers={["Shaders", "Résultat"]}>
+            <TabStrip
+                className="tab-strip"
+                headers={["Shaders", "Options", "Résultat"]}
+            >
                 <div>
                     <ProgramCodeEditor
                         project={project}
                         onAnalyse={setAnalyse}
                     />
+                </div>
+                <div>
                     <CodeOptionsView value={options} onChange={setOptions} />
                 </div>
                 <div>

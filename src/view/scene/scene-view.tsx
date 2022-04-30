@@ -77,7 +77,9 @@ export default function SceneView(props: SceneViewProps) {
             <canvas
                 className={fullscreen ? "fullscreen" : "theme-shadow-button"}
                 ref={refCanvas}
-                onDoubleClick={() => setFullscreen(!fullscreen)}
+                onDoubleClick={(evt) => {
+                    if (!evt.ctrlKey) setFullscreen(!fullscreen)
+                }}
             ></canvas>
             <footer>
                 <p>Double-clic pour passer en plein écran (et revenir)</p>
