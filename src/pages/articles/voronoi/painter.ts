@@ -180,15 +180,19 @@ export default class Painter {
 uniform vec2 uniCenter;
 uniform float uniScale;
 uniform float uniRatio;
+uniform float uniTime;
 
 in vec2 attPoint;
 
 out vec2 varUV;
+out vec2 varSun;
 
 void main() {
   vec2 point = (attPoint - uniCenter) * uniScale;
   varUV = attPoint;
   point.y *= uniRatio;
+  float ang = uniTime * 0.001;
+  varSun = vec2(cos(ang), sin(ang));
   gl_Position = vec4(point, 0.0, 1.0);
 }`
     static readonly FRAG = `#version 300 es
@@ -199,11 +203,12 @@ uniform sampler2D uniTexCells;
 uniform sampler2D uniTexColors;
 
 in vec2 varUV;
+in vec2 varSun;
 
 out vec4 FragColor;
 
-const float W = 512.0;
-const float H = 512.0;
+const float W = 1024.0;
+const float H = 1024.0;
 const float X = 1.0 / W;
 const float Y = 1.0 / H;
 const float A = 1.0;
@@ -228,9 +233,14 @@ void main() {
     best(cell1, cell2),
     best(cell3, cell4)
   );
-  float v = cell.z;
-  float d = 0.5 + (1.0 - dist(cell)) * 0.6;
-  vec3 color = texture(uniTexColors, vec2(v, 0.5)).rgb * d;
+  float height = cell.z;
+  /*
+  vec3 u = normalize(vec3(1, 0, 8.0 * (cell2.z - cell1.z)));
+  vec3 v = normalize(vec3(0, 1, 8.0 * (cell4.z - cell1.z)));
+  vec3 n = cross(v, u);
+  float d = 1.0 + dot(n, normalize(vec3(varSun, height)));
+  */
+  vec3 color = texture(uniTexColors, vec2(height, 0.5)).rgb;
   FragColor = vec4(color, 1);
 }`
 }
