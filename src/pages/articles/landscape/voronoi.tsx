@@ -7,8 +7,6 @@ import Painter from "./painter"
 import Scene, { PaintFunc } from "@/view/scene"
 import Slider from "@/ui/view/slider"
 import Text from "./text.md"
-import { TextureFromUint8ArrayRGB } from "../../../webgl2/texture/texture-from-uint8array-rgb"
-import { TextureFromUint8ArrayRGBA } from "../../../webgl2/texture/texture-from-uint8array-rgba"
 
 export interface BasicPerspectiveProps {
     className?: string
@@ -51,34 +49,60 @@ function makeRender(
 ): any {
     return (gl: WebGL2RenderingContext) => {
         let scale = 2
-        const texLandscape = new TextureFromUint8ArrayRGBA(gl, {
-            width: SIZE,
-            height: SIZE,
-        })
-        texLandscape.applyNearest()
-        texLandscape.applyRepeat()
-        const updateTerrain = () => {
+        const texLandscape = gl.createTexture()
+        if (!texLandscape) throw Error("Unable to create a texture!")
+
+        const createTerrain = () => {
+            gl.bindTexture(gl.TEXTURE_2D, texLandscape)
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false)
             const dataLandscape = makeLandscapeTextureData()
-            texLandscape.update(dataLandscape)
+            gl.texImage2D(
+                gl.TEXTURE_2D,
+                0,
+                gl.RGBA,
+                SIZE,
+                SIZE,
+                0,
+                gl.RGBA,
+                gl.UNSIGNED_BYTE,
+                dataLandscape
+            )
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
         }
-        updateTerrain()
+
+        createTerrain()
         refAction.current.add((action) => {
             switch (action) {
                 case "terrain":
-                    updateTerrain()
+                    createTerrain()
                     break
             }
         })
+        const texColors = gl.createTexture()
+        if (!texColors) throw Error("Unable to create a texture!")
+
+        gl.bindTexture(gl.TEXTURE_2D, texColors)
         const dataColors = makeColorTextureData()
-        const texColors = new TextureFromUint8ArrayRGB(gl, {
-            width: Math.floor(dataColors.length / 3),
-            height: 1,
-        })
-        texColors.update(dataColors)
-        texColors.applyLinear()
-        texColors.applyClampToEdge()
+        gl.texImage2D(
+            gl.TEXTURE_2D,
+            0,
+            gl.RGBA,
+            dataColors.length >> 2,
+            1,
+            0,
+            gl.RGBA,
+            gl.UNSIGNED_BYTE,
+            dataColors
+        )
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE)
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+
         gl.canvas.addEventListener("pointerdown", (evt: PointerEvent) => {
-            if (evt.ctrlKey) updateTerrain()
+            if (evt.ctrlKey) createTerrain()
         })
         gl.canvas.addEventListener("wheel", (evt: WheelEvent) => {
             const FACTOR = 1.05
@@ -94,7 +118,6 @@ function makeRender(
         painter.pokeVertStaticData(1, 1)
         painter.pushVertStaticArray()
         gl.clearColor(0, 0, 0, 1)
-        console.log("🚀 [voronoi] texColors.texture = ", texColors.texture) // @FIXME: Remove this line written on 2022-05-02 at 17:05
         return new Promise<PaintFunc>((resolve) => {
             resolve((time) => {
                 painter.paint(time, (p, t) => {
@@ -104,9 +127,9 @@ function makeRender(
                     const w = gl.drawingBufferWidth
                     const h = gl.drawingBufferHeight
                     p.$uniRatio(w / h)
-                    p.$uniTexCells(texLandscape.texture)
-                    p.$uniTexColors(texColors.texture)
-                    // p.$uniTime(time)
+                    p.$uniTexCells(texLandscape)
+                    p.$uniTexColors(texColors)
+                    p.$uniTime(time)
                 })
             })
         })
@@ -153,7 +176,7 @@ function makeLandscapeTextureData(): Uint8Array {
             array[ptr++] = Math.floor(255 * (0.5 + r * Math.cos(ang)))
             array[ptr++] = Math.floor(255 * (0.5 + r * Math.sin(ang)))
             array[ptr++] = elevations[eleIdx++]
-            array[ptr++] = 255
+            array[ptr++] = 0
         }
     }
     return array
@@ -220,7 +243,7 @@ function makeElevations(mountains: Float32Array): Uint8Array {
 function ramp(colors: string[], steps = 8): number[] {
     const data: number[] = []
     Color.interpolate(colors, steps).forEach((color) =>
-        data.push(...color.toArrayRGB())
+        data.push(...color.toArrayRGBA())
     )
     return data
 }

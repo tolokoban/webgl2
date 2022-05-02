@@ -1,5 +1,5 @@
 /**
- * Code généré automatiquement le 02/05/2022
+ * Code généré automatiquement le 30/04/2022
  */
 export default class Painter {
     private readonly vertStaticBuff: WebGLBuffer
@@ -9,6 +9,7 @@ export default class Painter {
     private readonly _$uniCenter: WebGLUniformLocation
     private readonly _$uniTexCells: WebGLUniformLocation
     private readonly _$uniScale: WebGLUniformLocation
+    private readonly _$uniTime: WebGLUniformLocation
     private readonly vertStaticData: Float32Array
     /**
      * Détermine quelle instance la fonction
@@ -47,6 +48,10 @@ export default class Painter {
         this._$uniScale = gl.getUniformLocation(
             prg,
             "uniScale"
+        ) as WebGLUniformLocation
+        this._$uniTime = gl.getUniformLocation(
+            prg,
+            "uniTime"
         ) as WebGLUniformLocation
         const vertArray = gl.createVertexArray()
         if (!vertArray) throw Error("Unable to create Vertex Array Object!")
@@ -161,6 +166,10 @@ export default class Painter {
         this.gl.uniform1f(this._$uniScale, value)
     }
 
+    $uniTime(value: number) {
+        this.gl.uniform1f(this._$uniTime, value)
+    }
+
     private static createShader(
         gl: WebGL2RenderingContext,
         prg: WebGLProgram,
@@ -178,17 +187,20 @@ export default class Painter {
     static readonly VERT = `#version 300 es
 
 uniform vec2 uniCenter;
+uniform float uniScale;
 uniform float uniRatio;
 uniform float uniTime;
 
 in vec2 attPoint;
 
-out vec2 varVoronoiUV;
-out vec2 varSun;
+out vec2 varUV;
+out vec2 varPoint;
 
 void main() {
-  varVoronoiUV = (attPoint - uniCenter);
-  varVoronoiUV.x *= uniRatio;
+  varPoint = attPoint * vec2(1, uniRatio);
+  vec2 point = (attPoint - uniCenter + vec2(uniTime * 0.000079141, uniTime * 0.000010348)) * uniScale;
+  point.x *= uniRatio;
+  varUV = point;
   gl_Position = vec4(2.0 * (attPoint - vec2(0.5, 0.5)), 0.0, 1.0);
 }`
     static readonly FRAG = `#version 300 es
@@ -197,51 +209,46 @@ precision mediump float;
 
 uniform sampler2D uniTexCells;
 uniform sampler2D uniTexColors;
-uniform sampler2D uniTexElevations;
-uniform float uniScale;
 
-in vec2 varVoronoiUV;
+in vec2 varUV;
+in vec2 varPoint;
 
 out vec4 FragColor;
 
+const float SIZE = 1024.0;
+const float W = SIZE;
+const float H = SIZE;
+const float X = 1.0 / W;
+const float Y = 1.0 / H;
 const float A = 1.0;
 
-const float GRID = 24.0;
-const float INV_GRID = 1.0 / GRID;
-
-struct Cell {
-    vec2 shift;
-    float distance;
-};
-
-float dist(vec2 vec) {
+float dist(vec3 vec) {
   return vec.x * vec.x + vec.y * vec.y;
 }
 
-Cell best(Cell cell1, Cell cell2) {
-  if (cell1.distance < cell2.distance) return cell1;
-  return cell2;
-}
-
-Cell makeCell(vec2 uvI, vec2 uvF, float shiftX, float shiftY) {
-  vec2 shift = vec2(shiftX, shiftY);
-  vec2 origin = shift - vec2(0.5, 0.5) + texture(uniTexCells, uvI + INV_GRID * shift).xy - uvF;
-  return Cell(shift, dist(origin));
+vec3 best(vec3 p1, vec3 p2) {
+  float d1 = dist(p1);
+  float d2 = dist(p2);
+  return d1 < d2 ? p1 : p2;
 }
 
 void main() {
-  vec2 integralUV = floor(varVoronoiUV * GRID) / GRID;
-  vec2 fractionalUV = fract(varVoronoiUV * GRID);
-  Cell cell1 = makeCell(integralUV, fractionalUV, 0.0, 0.0);
-  Cell cell2 = makeCell(integralUV, fractionalUV, 1.0, 0.0);
-  Cell cell3 = makeCell(integralUV, fractionalUV, 1.0, 1.0);
-  Cell cell4 = makeCell(integralUV, fractionalUV, 0.0, 1.0);
-  Cell cell = best(
-      best(cell1, cell2),
-      best(cell3, cell4)
+  vec3 center = vec3(fract(varUV.x * W) + 0.5, fract(varUV.y * H) + 0.5, 0);
+  vec3 cell1 = texture(uniTexCells, varUV).xyz - center;
+  vec3 cell2 = texture(uniTexCells, varUV + vec2(X, 0)).xyz + vec3(A, 0, 0) - center;
+  vec3 cell3 = texture(uniTexCells, varUV + vec2(X, Y)).xyz + vec3(A, A, 0) - center;
+  vec3 cell4 = texture(uniTexCells, varUV + vec2(0, Y)).xyz + vec3(0, A, 0) - center;
+  vec3 cell = best(
+    best(cell1, cell2),
+    best(cell3, cell4)
   );
-  vec2 elevationUV = (integralUV + cell.shift * INV_GRID) * uniScale;
-  float height = texture(uniTexCells, elevationUV).z;
+  float height = cell.z;
+  /*
+  vec3 u = normalize(vec3(1, 0, 8.0 * (cell2.z - cell1.z)));
+  vec3 v = normalize(vec3(0, 1, 8.0 * (cell4.z - cell1.z)));
+  vec3 n = cross(v, u);
+  float d = 1.0 + dot(n, normalize(vec3(varSun, height)));
+  */
   vec3 color = texture(uniTexColors, vec2(height, 0.5)).rgb;
   FragColor = vec4(color, 1);
 }`
