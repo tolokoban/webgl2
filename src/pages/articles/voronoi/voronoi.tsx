@@ -81,6 +81,7 @@ function makeRender(
             if (evt.ctrlKey) updateTerrain()
         })
         gl.canvas.addEventListener("wheel", (evt: WheelEvent) => {
+            evt.preventDefault()
             const FACTOR = 1.05
             if (evt.deltaY > 0) scale *= FACTOR
             else scale /= FACTOR

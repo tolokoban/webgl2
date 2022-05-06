@@ -1,0 +1,29 @@
+-   Définir un point :
+    -   par coordonnées : `M(2,1.5)`, `A2(0,-3)`, `X'(-1,2)`
+    -   comme barycentre : `M[ABC]`, `N[3A 2B]`
+-   Tracer une droite entre deux points : `(AB)`
+-   Tracer une droite médiane : `(A|B)`
+-   Tracer un segment : `[AB]`
+-   Tracer un polygone : `[ABCDEA]`
+-   Afficher les points : `{ABC}`
+-   Tracer un cercle : `@ C 3.5`
+-   Épaisseur du trait : `% 3`
+-   Couleurs (stoke, fill): `#02`
+    -   **0** : transparent
+    -   **1** : noir
+    -   **2** : couleur principale
+    -   **3** : couleur secondaire
+    -   **4** : grid
+    -   **5** : couleur principale (claire)
+    -   **6** : couleur secondaire (claire)
+    -   **7** : noir (semi-transparent)
+    -   **8** : couleur principale (semi-transparent)
+    -   **9** : couleur secondaire (semi-transparent)
+    -   **R** : Pur rouge.
+    -   **G** : Pur vert.
+    -   **B** : Pur bleu.
+    -   **W** : Pur blanc.
+    -   **r** : Pur rouge (semi-transparent).
+    -   **g** : Pur vert (semi-transparent).
+    -   **b** : Pur bleu (semi-transparent).
+    -   **w** : Pur blanc (semi-transparent).

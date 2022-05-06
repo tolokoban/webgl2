@@ -24,6 +24,9 @@
 .view-MarkdownView code {
     color: var(--theme-color-on-accent-light);
     background-color: var(--theme-color-accent-light);
+    padding: 0 0.25em;
+    border-radius: 0.25em;
+    font-size: 80%;
 }
 
 .view-MarkdownView blockquote {

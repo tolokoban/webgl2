@@ -1,0 +1,30 @@
+.pages-tools-BlackBoardTools {
+    overflow: auto;
+}
+
+.pages-tools-BlackBoardTools > div.view {
+    display: flex;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 1em;
+}
+
+.pages-tools-BlackBoardTools > div.view > * {
+    flex: 1 1 auto;
+}
+
+.pages-tools-BlackBoardTools > div.view > textarea {
+    flex: 0 0 auto;
+    font-family: monospace;
+    font-size: 80%;
+    padding: 0.5em;
+}
+
+.pages-tools-BlackBoardTools > div.view pre {
+    width: 100%;
+    font-size: 80%;
+    padding: 1em;
+    margin: 0.5em;
+    border-radius: 0.5em;
+    white-space: pre-wrap;
+}

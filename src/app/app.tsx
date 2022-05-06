@@ -6,14 +6,19 @@ import "./app.css"
 
 const Test = React.lazy(() => import("@/test"))
 const WelcomeArticle = React.lazy(() => import("@/pages/articles/welcome"))
-const Webgl2ContextArticle = React.lazy(()=>import("@/pages/articles/intro/webgl2context"))
-const AttributesArticle = React.lazy(()=>import("@/pages/articles/intro/attributes"))
-const InstancesArticle = React.lazy(()=>import("@/pages/articles/instances"))
-const VoronoiArticle = React.lazy(()=>import("@/pages/articles/voronoi"))
+const Webgl2ContextArticle = React.lazy(
+    () => import("@/pages/articles/intro/webgl2context")
+)
+const AttributesArticle = React.lazy(
+    () => import("@/pages/articles/intro/attributes")
+)
+const InstancesArticle = React.lazy(() => import("@/pages/articles/instances"))
+const VoronoiArticle = React.lazy(() => import("@/pages/articles/voronoi"))
 const BasicPerspectiveArticle = React.lazy(
     () => import("@/pages/articles/basic-perspective")
 )
 const PainterTool = React.lazy(() => import("@/pages/tools/painter"))
+const BlackBoardTool = React.lazy(() => import("@/pages/tools/black-board"))
 
 const PAGES: { [hash: string]: JSX.Element } = {
     "#test": <Test />,
@@ -23,6 +28,7 @@ const PAGES: { [hash: string]: JSX.Element } = {
     "#article/instances": <InstancesArticle />,
     "#article/voronoi": <VoronoiArticle />,
     "#tool/painter": <PainterTool />,
+    "#tool/black-board": <BlackBoardTool />,
 }
 
 export default function App() {
