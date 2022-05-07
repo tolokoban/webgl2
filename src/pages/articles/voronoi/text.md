@@ -57,20 +57,16 @@ precision mediump float;
 
 uniform sampler2D uniTexCells;
 uniform sampler2D uniTexColors;
-uniform sampler2D uniTexElevations;
-uniform float uniScale;
+uniform float uniGrid;
+uniform float uniInvGrid;
 
 in vec2 varVoronoiUV;
+in float varScale;
 
 out vec4 FragColor;
 
-const float A = 1.0;
-
-const float GRID = 24.0;
-const float INV_GRID = 1.0 / GRID;
-
 struct Cell {
-    vec2 shift;
+    vec4 color;
     float distance;
 };
 
@@ -83,15 +79,21 @@ Cell best(Cell cell1, Cell cell2) {
   return cell2;
 }
 
+/**
+ * uvI: Coordonnées du coin inférieur gauche de la case.
+ * uvF: Coordonnées du pixel dans la case.
+ * shiftX, shiftY: décallage de la case courante.
+ */
 Cell makeCell(vec2 uvI, vec2 uvF, float shiftX, float shiftY) {
   vec2 shift = vec2(shiftX, shiftY);
-  vec2 origin = shift - vec2(0.5, 0.5) + texture(uniTexCells, uvI + INV_GRID * shift).xy - uvF;
-  return Cell(shift, dist(origin));
+  vec2 uv = uvI + uniInvGrid * shift;
+  vec2 origin = shift - vec2(0.5, 0.5) + texture(uniTexCells, uv).xy - uvF;
+  return Cell(texture(uniTexColors, uv * varScale + 0.5 * vec2(1.0 - varScale)), dist(origin));
 }
 
 void main() {
-  vec2 integralUV = floor(varVoronoiUV * GRID) / GRID;
-  vec2 fractionalUV = fract(varVoronoiUV * GRID);
+  vec2 integralUV = floor(varVoronoiUV * uniGrid) * uniInvGrid;
+  vec2 fractionalUV = fract(varVoronoiUV * uniGrid);
   Cell cell1 = makeCell(integralUV, fractionalUV, 0.0, 0.0);
   Cell cell2 = makeCell(integralUV, fractionalUV, 1.0, 0.0);
   Cell cell3 = makeCell(integralUV, fractionalUV, 1.0, 1.0);
@@ -100,9 +102,6 @@ void main() {
       best(cell1, cell2),
       best(cell3, cell4)
   );
-  vec2 elevationUV = (integralUV + cell.shift * INV_GRID) * uniScale;
-  float height = texture(uniTexCells, elevationUV).z;
-  vec3 color = texture(uniTexColors, vec2(height, 0.5)).rgb;
-  FragColor = vec4(color, 1);
+  FragColor = cell.color;
 }
 ```

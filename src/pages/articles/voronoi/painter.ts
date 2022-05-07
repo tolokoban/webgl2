@@ -1,14 +1,18 @@
 /**
- * Code généré automatiquement le 02/05/2022
+ * Code généré automatiquement le 07/05/2022
  */
 export default class Painter {
     private readonly vertStaticBuff: WebGLBuffer
     private readonly vertArray: WebGLVertexArrayObject
     private readonly _$uniTexColors: WebGLUniformLocation
+    private readonly _$uniDistortion: WebGLUniformLocation
+    private readonly _$uniAnimation: WebGLUniformLocation
     private readonly _$uniRatio: WebGLUniformLocation
-    private readonly _$uniCenter: WebGLUniformLocation
+    private readonly _$uniInvGrid: WebGLUniformLocation
     private readonly _$uniTexCells: WebGLUniformLocation
+    private readonly _$uniGrid: WebGLUniformLocation
     private readonly _$uniScale: WebGLUniformLocation
+    private readonly _$uniTime: WebGLUniformLocation
     private readonly vertStaticData: Float32Array
     /**
      * Détermine quelle instance la fonction
@@ -32,21 +36,37 @@ export default class Painter {
             prg,
             "uniTexColors"
         ) as WebGLUniformLocation
+        this._$uniDistortion = gl.getUniformLocation(
+            prg,
+            "uniDistortion"
+        ) as WebGLUniformLocation
+        this._$uniAnimation = gl.getUniformLocation(
+            prg,
+            "uniAnimation"
+        ) as WebGLUniformLocation
         this._$uniRatio = gl.getUniformLocation(
             prg,
             "uniRatio"
         ) as WebGLUniformLocation
-        this._$uniCenter = gl.getUniformLocation(
+        this._$uniInvGrid = gl.getUniformLocation(
             prg,
-            "uniCenter"
+            "uniInvGrid"
         ) as WebGLUniformLocation
         this._$uniTexCells = gl.getUniformLocation(
             prg,
             "uniTexCells"
         ) as WebGLUniformLocation
+        this._$uniGrid = gl.getUniformLocation(
+            prg,
+            "uniGrid"
+        ) as WebGLUniformLocation
         this._$uniScale = gl.getUniformLocation(
             prg,
             "uniScale"
+        ) as WebGLUniformLocation
+        this._$uniTime = gl.getUniformLocation(
+            prg,
+            "uniTime"
         ) as WebGLUniformLocation
         const vertArray = gl.createVertexArray()
         if (!vertArray) throw Error("Unable to create Vertex Array Object!")
@@ -142,12 +162,20 @@ export default class Painter {
         gl.uniform1i(this._$uniTexColors, 0)
     }
 
+    $uniDistortion(value: number) {
+        this.gl.uniform1f(this._$uniDistortion, value)
+    }
+
+    $uniAnimation(value: number) {
+        this.gl.uniform1f(this._$uniAnimation, value)
+    }
+
     $uniRatio(value: number) {
         this.gl.uniform1f(this._$uniRatio, value)
     }
 
-    $uniCenter(x: number, y: number) {
-        this.gl.uniform2f(this._$uniCenter, x, y)
+    $uniInvGrid(value: number) {
+        this.gl.uniform1f(this._$uniInvGrid, value)
     }
 
     $uniTexCells(texture: WebGLTexture) {
@@ -157,8 +185,16 @@ export default class Painter {
         gl.uniform1i(this._$uniTexCells, 1)
     }
 
+    $uniGrid(value: number) {
+        this.gl.uniform1f(this._$uniGrid, value)
+    }
+
     $uniScale(value: number) {
         this.gl.uniform1f(this._$uniScale, value)
+    }
+
+    $uniTime(value: number) {
+        this.gl.uniform1f(this._$uniTime, value)
     }
 
     private static createShader(
@@ -177,18 +213,15 @@ export default class Painter {
 
     static readonly VERT = `#version 300 es
 
-uniform vec2 uniCenter;
 uniform float uniRatio;
-uniform float uniTime;
 
 in vec2 attPoint;
 
 out vec2 varVoronoiUV;
-out vec2 varSun;
 
 void main() {
-  varVoronoiUV = (attPoint - uniCenter);
-  varVoronoiUV.x *= uniRatio;
+  varVoronoiUV = attPoint;
+  varVoronoiUV.x = 0.5 + (varVoronoiUV.x - 0.5) * uniRatio;
   gl_Position = vec4(2.0 * (attPoint - vec2(0.5, 0.5)), 0.0, 1.0);
 }`
     static readonly FRAG = `#version 300 es
@@ -197,20 +230,19 @@ precision mediump float;
 
 uniform sampler2D uniTexCells;
 uniform sampler2D uniTexColors;
-uniform sampler2D uniTexElevations;
+uniform float uniTime;
+uniform float uniGrid;
+uniform float uniInvGrid;
+uniform float uniDistortion;
 uniform float uniScale;
+uniform float uniAnimation;
 
 in vec2 varVoronoiUV;
 
 out vec4 FragColor;
 
-const float A = 1.0;
-
-const float GRID = 24.0;
-const float INV_GRID = 1.0 / GRID;
-
 struct Cell {
-    vec2 shift;
+    vec4 color;
     float distance;
 };
 
@@ -223,15 +255,24 @@ Cell best(Cell cell1, Cell cell2) {
   return cell2;
 }
 
+/**
+ * uvI: Coordonnées du coin inférieur gauche de la case.
+ * uvF: Coordonnées du pixel dans la case.
+ * shiftX, shiftY: décallage de la case courante.
+ */
 Cell makeCell(vec2 uvI, vec2 uvF, float shiftX, float shiftY) {
   vec2 shift = vec2(shiftX, shiftY);
-  vec2 origin = shift - vec2(0.5, 0.5) + texture(uniTexCells, uvI + INV_GRID * shift).xy - uvF;
-  return Cell(shift, dist(origin));
+  vec2 uv = uvI + uniInvGrid * shift;
+  vec4 cell = texture(uniTexCells, uv);
+  vec2 origin = shift - vec2(0.5, 0.5) + cell.xy - uvF;
+  origin += uniAnimation * 0.5 * vec2(cos(cell.z * 0.00103 * uniTime), sin(cell.z * 0.000577 * uniTime));
+  origin /= 1.0 + uniAnimation;
+  return Cell(texture(uniTexColors, uv * uniScale + 0.5 * vec2(1.0 - uniScale)), dist(origin) * (1.0 + cell.z * uniDistortion));
 }
 
 void main() {
-  vec2 integralUV = floor(varVoronoiUV * GRID) / GRID;
-  vec2 fractionalUV = fract(varVoronoiUV * GRID);
+  vec2 integralUV = floor(varVoronoiUV * uniGrid) * uniInvGrid;
+  vec2 fractionalUV = fract(varVoronoiUV * uniGrid);
   Cell cell1 = makeCell(integralUV, fractionalUV, 0.0, 0.0);
   Cell cell2 = makeCell(integralUV, fractionalUV, 1.0, 0.0);
   Cell cell3 = makeCell(integralUV, fractionalUV, 1.0, 1.0);
@@ -240,9 +281,6 @@ void main() {
       best(cell1, cell2),
       best(cell3, cell4)
   );
-  vec2 elevationUV = (integralUV + cell.shift * INV_GRID) * uniScale;
-  float height = texture(uniTexCells, elevationUV).z;
-  vec3 color = texture(uniTexColors, vec2(height, 0.5)).rgb;
-  FragColor = vec4(color, 1);
+  FragColor = cell.color;
 }`
 }

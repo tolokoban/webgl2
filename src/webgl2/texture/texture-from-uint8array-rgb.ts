@@ -14,8 +14,6 @@ export class TextureFromUint8ArrayRGB extends Texture2D {
     ) {
         super(gl)
         this.expectedDataLength = 3 * options.width * options.height
-        const texture = gl.createTexture()
-        if (!texture) throw Error("Unable to create a texture!")
     }
 
     update(data: Uint8Array): boolean {
