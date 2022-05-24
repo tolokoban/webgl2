@@ -13,7 +13,12 @@ const AttributesArticle = React.lazy(
     () => import("@/pages/articles/intro/attributes")
 )
 const InstancesArticle = React.lazy(() => import("@/pages/articles/instances"))
-const VoronoiArticle = React.lazy(() => import("@/pages/articles/voronoi"))
+const Voronoi1Article = React.lazy(
+    () => import("@/pages/articles/voronoi/page1")
+)
+const Voronoi2Article = React.lazy(
+    () => import("@/pages/articles/voronoi/page2")
+)
 const BasicPerspectiveArticle = React.lazy(
     () => import("@/pages/articles/basic-perspective")
 )
@@ -26,7 +31,8 @@ const PAGES: { [hash: string]: JSX.Element } = {
     "#article/attributes": <AttributesArticle />,
     "#article/basic-perspective": <BasicPerspectiveArticle />,
     "#article/instances": <InstancesArticle />,
-    "#article/voronoi": <VoronoiArticle />,
+    "#article/voronoi1": <Voronoi1Article />,
+    "#article/voronoi2": <Voronoi2Article />,
     "#tool/painter": <PainterTool />,
     "#tool/black-board": <BlackBoardTool />,
 }

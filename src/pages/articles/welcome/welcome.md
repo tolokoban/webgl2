@@ -13,7 +13,7 @@
 -   Instances
     -   [Comment ça marche ?](#article/instances)
 -   Effets
-    -   [Voronoi](#article/voronoi)
+    -   [Voronoi](#article/voronoi1)
 -   3D
     -   Perspective
         -   [Perspective basique](#article/basic-perspective)
